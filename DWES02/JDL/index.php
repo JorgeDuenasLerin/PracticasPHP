@@ -1,5 +1,6 @@
 <?php
 
+// Variables del formulario
 $nombre="";
 $telefono="";
 
