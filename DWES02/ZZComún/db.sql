@@ -6,3 +6,5 @@ CREATE TABLE agenda (
   telefono VARCHAR(12) NOT NULL,
   PRIMARY KEY (id)
 );
+
+INSERT INTO agenda (nombre, telefono) VALUES ('Jorge', '666006600');
