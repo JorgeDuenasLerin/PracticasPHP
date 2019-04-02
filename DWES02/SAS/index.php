@@ -4,6 +4,10 @@ $numero = "";
 
 $errores = [];
 
+require_once('conexMetodosBBDD.php');
+
+$consulta = new conexMetodosBBDD();
+
 if(isset($_GET['enviar'])){
 
     if(isset($_GET['nombre'])){
@@ -25,6 +29,13 @@ if(isset($_GET['enviar'])){
     if(isset($_GET['nombre']) && isset($_GET['numero'])){
         if(!empty($_GET['nombre']) && !empty($_GET['numero'])){
             //header('Location: http://www.example.com/');
+            
+            $conctacto = $consulta->crearContacto();
+            if($contacto){
+                echo "<h1>Contacto creado</h1>";
+            } else {
+                echo "<h1>No se ha creado el contacto</h1>";
+            }
         }
     }
 
@@ -39,6 +50,16 @@ if(isset($_GET['enviar'])){
     <title>Añadir contacto</title>
 </head>
 <body>
+    <table>
+    <?php
+        $contactos = $consulta->mostrarContactos();
+        foreach ($contactos as $key => $value) {
+            echo '<tr><td>';
+            echo $value;
+            echo '</td></tr>';
+        }
+    ?>
+    </table>
     <form>
         <label>Nombre<input type="text" name="nombre"></label>  <br>
         <label>Nº Telefono<input type="number" name="numero"></label> <br><br>
