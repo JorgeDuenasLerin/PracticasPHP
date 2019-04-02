@@ -1,5 +1,13 @@
 <?php
 
+require_once("config.php");
+require_once("dbFunciones.php");
+
+// Sección de base de datos
+$conn = conectar($host, $dbname, $usuario, $password);
+$datos = consulta($conn, 'SELECT * from agenda');
+
+
 // Variables del formulario
 $nombre="";
 $telefono="";
@@ -13,22 +21,13 @@ $telefono="";
     <title></title>
   </head>
   <body>
-    <div>
-      <span>Nombre</span>
-      <span>Teléfono</span>
-    </div>
-    <div>
-      <span>Nombre</span>
-      <span>Teléfono</span>
-    </div>
-    <div>
-      <span>Nombre</span>
-      <span>Teléfono</span>
-    </div>
-    <div>
-      <span>Nombre</span>
-      <span>Teléfono</span>
-    </div>
+    <?php foreach ($datos as $fila) { ?>
+      <div>
+        <span><?=$fila['nombre']?></span>
+        <span><?=$fila['telefono']?></span>
+      </div>
+    <?php } ?>
+    <span>------------------------------------------------</span>
     <form action="index.php" method="post">
       Nombre: <input name="nombre" value="<?=$nombre?>" placeholder="Nombre..." /></br>
       Teléfono: <input name="telefono" value="<?=$telefono?>" placeholder="Teléfono..." /></br>
