@@ -38,17 +38,18 @@ if(isset($_GET['enviar'])){
 <div id="contenido">
 	<h2>Productos de la familia: </h2>
 	<?php 
-	//if(!empty($resultado)){
-		echo "<h1>ENTRO HTML</h1>";
+	if(!empty($resultado)){
 		foreach ($resultado as $value) {
-			foreach ($value as $clave => $valor) {
-				echo "<p>";
-				echo $clave;
-				echo $valor;
-				echo "</p>";
-			}
+			echo "<p> Producto: ";
+			echo $value['nombre_corto'].' | ';
+			echo $value['cod'].' | ';
+			echo $value['PVP'].'€ | ';
+			?>
+			<a href="editar.php?producto=<?= $value['cod']?>"><button>EDITAR</button></a>
+			<?php
+			echo "</p>";
 		}
-	//}
+	}
 	?>
 </div>
 <pre>

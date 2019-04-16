@@ -34,19 +34,7 @@ class conexMetodosBBDD {
     PRIMARY KEY (id)
     */
 
-    public function mostrarContactos(){
-        //$sentenciaSQL=$this->dbPDO->query('SELECT * FROM agenda')->fetchAll();
-        $sentenciaSQL=$this->dbPDO->query('SELECT * FROM agenda');
-        
-        if($sentenciaSQL){
-           return $resultado = $sentenciaSQL->fetchAll(PDO::FETCH_ASSOC);
-        } else {
-            print_r($this->dbPDO->errorInfo());
-        }
-    }
-
     public function mostrarFamilia(string $familia){
-       
         try {
             $rs = $this->dbPDO->prepare("SELECT * FROM producto WHERE familia = :familia");
             $rs->bindParam(':familia', $familia);
@@ -71,58 +59,59 @@ class conexMetodosBBDD {
         }
     }
 
-    public function consultarContacto(string $nombre){
-        $sentenciaSQL = $this->dbPDO->prepare("SELECT * FROM agenda WHERE nombre = :nombre");
-        $sentenciaSQL->bindParam(':nombre', $nombre);
-        $sentenciaSQL->execute();
-        if(!$sentenciaSQL){
+    public function consultarProducto(string $cod){
+        try {
+            $rs = $this->dbPDO->prepare("SELECT * FROM producto WHERE cod = :cod");
+            $rs->bindParam(':cod', $cod);
+            $rs->execute();
+
+            if(!$rs){
+                print_r($this->dbPDO->errorInfo());
+                throw new Exception("<h3>Oh noes! There's an error in the query!</h3>");
+                echo "<h2>no funciona la consulta</h2>";
+            } else {
+                echo "<h2>funciona la consulta </h2>";
+                $resultado = $rs->fetchAll(PDO::FETCH_ASSOC);    
+                //print_r($resultado[0]);
+
+                return $resultado;
+            }
+
+        } catch (Exception $e) {
             print_r($this->dbPDO->errorInfo());
-        } else {
-            $resultado = $sentenciaSQL->fetchALl(PDO::FETCH_ASSOC);
-            return $resultado;
+            echo 'Message: ' .$e->getMessage();
+            die();
         }
-    }
+    } // funcion mostrarProducto
 
-    public function crearContacto(string $nombre, string $telefono){
+    public function actualizarProducto($cod, $nombre, $nombre_corto, $descripcion, $pvp){
+        try {
+            $rs = $this->dbPDO->prepare("UPDATE producto SET cod = :cod, nombre = :nombre, nombre_corto = :nombre_corto, descripcion = :descripcion, pvp = :pvp WHERE cod = :cod");
+            $rs->bindParam(':cod', $cod);
+            $rs->bindParam(':nombre', $nombre);
+            $rs->bindParam(':nombre_corto', $nombre_corto);
+            $rs->bindParam(':descripcion', $descripcion);
+            $rs->bindParam(':pvp', $pvp);
+            $rs->execute();
 
-        if(!$existeContacto){
-            $sentenciaSQL=$this->dbPDO->prepare("INSERT INTO agenda(nombre, telefono) VALUES (:nombre, :telefono)");
-            $sentenciaSQL->bindParam(':nombre', $nombre);
-            $sentenciaSQL->bindParam(':telefono', $telefono);
-            $sentenciaSQL->execute(); 
-        } else {
-            echo "<h2>Ya existe el contacto</h2>";
-        }
+            if(!$rs){
+                print_r($this->dbPDO->errorInfo());
+                throw new Exception("Error en la query");
+                echo "<h2>no funciona la consulta</h2>";
+            } else {
+                echo "<h2>funcion la consulta</h2>";
+                print_r($rs);
+                return $rs;
+            }
 
-        if (!$sentenciaSQL) {
+        } catch (Exception $e) {
             print_r($this->dbPDO->errorInfo());
-        }else{
-            // BOTH en inglés es AMBOS (asociativo y numérico)
-            // ASSOC solo lo devuelve en modo asociativo
-            $resultado = $sentenciaSQL->fetchAll(PDO::FETCH_ASSOC);
-            return $resultado;
+            echo 'Message: ' .$e->getMessage();
+            die();
         }
-    } // funcion crearContacto
-
-    public function modificarContacto(string $nombre, string $telefono){
-        $stmt = $this->dbPDO->prepare("UPDATE agenda SET telefono = :telefono WHERE nombre = :nombre");
-        
-        $stmt->bindParam(':nombre', $nombre);
-        $stmt->bindParam(':telefono', $telefono);
-
-        $stmt->execute();
-
-        return $stmt;
     }
 
-    public function eliminarContacto(string $nombre){
-        $stmt=$this->dbPDO->prepare("DELETE FROM agenda WHERE nombre = :nombre");
-        $stmt->bindParam(':nombre', $nombre);
-
-        $stmt->execute();
-
-        return $stmt->rowCount();
-    }
+   
     
 } // de la clase conexMetodosBBDD
 ?>  
