@@ -1,0 +1,19 @@
+Creación de una tienda online.
+******************************
+
+
+En esta práctica vamos a crear la página web de una frutería online.
+Será una versión simplificada.
+
+No tendrá usuarios
+No tendrá gestión de stock
+
+La información de los productos estará en la base de datos
+La información del carrito estará en la sesión.
+
+index.php
+\- Saca un listado de productos
+   cada producto tiene un formulario para añadir elementos al carrito
+
+confirmarcompra.php
+\- Saca el listado de productos del carrito y permite confirmar antes de comprar
