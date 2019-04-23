@@ -12,6 +12,15 @@
 		$data = htmlspecialchars($data);
 		return $data;
 	}
+	/*
+	echo "<pre>";
+	var_dump($_SERVER);
+	echo "</pre>";
+
+	echo "<pre>";
+	var_dump($_GET);
+	echo "</pre>";
+	*/
 
 	//Comprobamos los datos enviados por $_GET
 	if($_SERVER['REQUEST_METHOD'] == 'GET'){
@@ -37,7 +46,10 @@
 
 			//Se realiza la consulta que comprueba si el nombre esta en la base de datos, hacemos un conteo del numero de veces que aparece y luego con fetchColumn(), realizamos la comprobacion respectiva.
 
+			// TODO: Preparar esta consulta
 			$buscado = $pdo->query("SELECT COUNT(*) from agenda WHERE nombre = '$nombre'");
+			
+			// TODO: ¿Qué ocurre si hay un error en la sintaxis de la consulta?
 
 			$fila = $buscado->fetchColumn();
 			//Si $fila es igual a 0, $nombre no esta en la base de datos.
@@ -45,8 +57,10 @@
 
 				//Si estamos aqui, hacemos un INSERT en la base de datos.
 				if(!empty($nombre) && !empty($telefono)){
+					// TODO: preparar consulta
 
 					$stmt = $pdo->prepare("INSERT INTO agenda (nombre, telefono) VALUES('$nombre', '$telefono')");
+					
 					$stmt->execute();	
 				}
 			
