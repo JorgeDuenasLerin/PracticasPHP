@@ -47,3 +47,36 @@ $ git commit -m 'Titulo del commit'
 $ git push
 ~~~
 
+***
+### Blame (Muestra qué revisión y autor modificaron por última vez cada línea de un archivo.)
+~~~
+$ git blame 'NombreArchivo'
+~~~
+
+***
+### Stash (Congela el estado en el que se encuentra el proyecto en un momento determinado, con todos los cambios que tenemos sin "commit", y lo guarda en una pila provisional brindando la posibilidad de poder recuperarlo más adelante.)
+~~~
+$ git stash 
+~~~
+
+***
+### Stash apply(Recupera los cambios almacenados en la pila provisional.)
+~~~
+$ git stash apply
+~~~
+
+***
+### Checkout(Cambia ramas o restaura archivos de árbol de trabajo.)
+~~~
+$ git checkout
+~~~
+
+***
+### Checkout master(Vuelve a la rama principal
+.)
+~~~
+$ git checkout master
+~~~
+
+
+
