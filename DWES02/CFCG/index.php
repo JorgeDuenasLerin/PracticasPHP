@@ -23,16 +23,17 @@
 	*/
 
 	//Comprobamos los datos enviados por $_GET
-	if($_SERVER['REQUEST_METHOD'] == 'GET'){
+	if($_SERVER['REQUEST_METHOD'] == 'POST'){
+		if(isset($_POST['enviar'])){
+			if(empty($_POST['nombre'])){
+				$nombreError = "* El nombre es requerido";
+			}else{
+				$nombre = cleanInput($_POST['nombre']);
+			}
 
-		if(empty($_GET['nombre'])){
-			$nombreError = "* El nombre es requerido";
-		}else{
-			$nombre = cleanInput($_GET['nombre']);
-		}
-
-		if(!empty($_GET['telefono'])){
-			$telefono = cleanInput($_GET['telefono']);
+			if(!empty($_POST['telefono'])){
+				$telefono = cleanInput($_POST['telefono']);
+			}	
 		}
 	}
 
@@ -47,7 +48,9 @@
 			//Se realiza la consulta que comprueba si el nombre esta en la base de datos, hacemos un conteo del numero de veces que aparece y luego con fetchColumn(), realizamos la comprobacion respectiva.
 
 			// TODO: Preparar esta consulta
-			$buscado = $pdo->query("SELECT COUNT(*) from agenda WHERE nombre = '$nombre'");
+			$buscado = $pdo->prepare("SELECT COUNT(*) from agenda WHERE nombre = ?");
+			$buscado->bindParam(1,$nombre);
+			$buscado->execute();
 			
 			// TODO: ¿Qué ocurre si hay un error en la sintaxis de la consulta?
 
@@ -57,10 +60,10 @@
 
 				//Si estamos aqui, hacemos un INSERT en la base de datos.
 				if(!empty($nombre) && !empty($telefono)){
-					// TODO: preparar consulta
 
-					$stmt = $pdo->prepare("INSERT INTO agenda (nombre, telefono) VALUES('$nombre', '$telefono')");
-					
+					$stmt = $pdo->prepare("INSERT INTO agenda (nombre, telefono) VALUES(? , ?)");
+					$stmt->bindParam(1,$nombre);
+					$stmt->bindParam(2,$telefono);
 					$stmt->execute();	
 				}
 			
@@ -69,11 +72,15 @@
 				//Si el nombre está y el campo del telefono no, borramos ese registro
 				if(!empty($nombre) && empty($telefono)){
 
-					$pdo->exec("DELETE FROM agenda WHERE nombre = '$nombre'");
+					$stmt = $pdo->prepare("DELETE FROM agenda WHERE nombre = ? ");
+					$stmt->bindParam(1, $nombre);
+					$stmt->execute();
 				
 				}elseif(!empty($nombre) && !empty($telefono)){//Si el nombre está y aparece un nuevo número de télefono, cambiamos el número de teléfono por uno nuevo.
 
-					$stmt = $pdo->prepare("UPDATE agenda SET telefono = $telefono WHERE nombre = '$nombre'");
+					$stmt = $pdo->prepare("UPDATE agenda SET telefono = ? WHERE nombre = ?");
+					$stmt->bindParam(1,$telefono);
+					$stmt->bindParam(2,$nombre);
 					$stmt->execute();
 
 				}
@@ -112,11 +119,11 @@
 </head>
 <body>
 
-	<form action="index.php" >
+	<form action="index.php" method="POST">
 		<label>Nombre :<input type="text" name="nombre" value="<?= $nombre;?>" ></label>
 		<span style="color: red"><?= $nombreError; ?></span><br>
 		<label>Teléfono: <input type="text" name="telefono"></label><br>
-		<input type="submit" value="enviar">
+		<input type="submit" name="enviar" value="enviar">
 	</form>
 </body>
 <!--http://localhost:8000/PracticasPHP/DWES02/CFCG/index.php
