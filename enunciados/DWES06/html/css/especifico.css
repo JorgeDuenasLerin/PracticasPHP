@@ -1,0 +1,11 @@
+.form-login {
+  text-align: center;
+}
+
+.form-login * {
+  margin: 0.2em;
+}
+
+.todo-espacio {
+  width: 100%;
+}

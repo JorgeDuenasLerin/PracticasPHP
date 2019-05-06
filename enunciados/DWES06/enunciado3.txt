@@ -1,0 +1,5 @@
+Recuperando contraseña
+**********************
+
+Crea las página necesarias para que un usuarios que tenga un link
+con un token pueda reestablecer su contraseña.

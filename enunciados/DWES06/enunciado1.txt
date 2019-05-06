@@ -1,0 +1,22 @@
+Creación de un sistema de login
+*******************************
+
+Tenemos una página web con los siguientes enlaces:
+0.- index.php
+1.- info1.php
+2.- info2.php
+3.- info3.php
+4.- info4.php
+5.- info5.php
+
+En la página index.php hay enlaces a las otras páginas. A las páginas de
+información solo podrán acceder los usuarios logueados, esto se
+determinará consultando en la tabla usuarios de la base de datos.
+
+Tener en cuenta que:
+.- Debes usar las herramientas adecuadas para cada parte del proceso.
+.- Las contraseñas nunca se almacenan en claro
+.- Debes evitar la inyección SQL
+
+En el caso de que un usuario no autentificado intente acceder a un área no
+permitida se reenviará a la página principal y se mostrará un mensaje de error

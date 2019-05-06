@@ -1,0 +1,13 @@
+Registrando los accesos no permitidos
+*************************************
+
+Modifica la práctica anterior para que cuando alguien intente acceder al área
+protegida se escriba en un fichero de log (acceso-denegado.txt) la información
+de:
+.- Dirección IP
+.- País de la dirección IP
+.- Sistema operativo
+.- Navegador
+
+Tras registrar esta información se devolverá a la página de inicio con el
+mensaje de error y la información que ha sido registrada.
