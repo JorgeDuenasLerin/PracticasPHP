@@ -1,0 +1,39 @@
+img.eco {
+  width: 1em;
+  height: 1em;
+  display: inline;
+  margin: 0 0.3em;
+}
+
+form.anade-producto input.cantidad{
+  width: 3em;
+}
+
+span.precio-carrito {
+  float:right;
+}
+
+p.separador {
+  border-bottom: 1px solid black;
+}
+
+
+.button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.button-blue {background-color: #008CBA;} /* Blue */
+.button-red {background-color: #f44336;} /* Red */
+.button-gray {background-color: #e7e7e7; color: black;} /* Gray */
+.button-black {background-color: #555555;} /* Black */
+
+.button-100 {width: 100%;}
