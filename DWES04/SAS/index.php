@@ -2,15 +2,26 @@
 $mensaje = "";
 session_start();
 
+$idioma = 'español';
+$perfil = 'no';
+$zona   = 'GMT';
+
 if(isset($_POST['establecer'])){
   if( isset($_POST['idioma']) && isset($_POST['perfil']) && isset($_POST['zona']) ){
     //if(!empty($_POST['idioma']) && !empty($_POST['perfil']) && !empty($_POST['zona'])){
       $_SESSION["idioma"] = $_POST['idioma'];
       $_SESSION["perfil"] = $_POST['perfil'];
       $_SESSION["zona"] = $_POST['zona'];
+
       $mensaje = "Informacion guardada en la sesión";
     //}
   }
+}
+
+if(isset($_SESSION["idioma"])) {
+  $idioma = $_SESSION["idioma"];
+  $perfil = $_SESSION["perfil"];
+  $zona   = $_SESSION["zona"];
 }
 
 echo "<pre>";
@@ -36,20 +47,20 @@ echo "</pre>";
       <form action="" method="post">
 
         <b>Idioma:</b>
-        <select name="idioma">      
-          
+        <select name="idioma">
+
           <option value="español" <?php  if($_POST['idioma'] == 'español') echo "selected"; ?>>español</option>
           <option value="ingles" <?php  if($_POST['idioma'] == 'ingles') echo "selected"; ?>>inglés</option>
         </select><br><br>
 
         <b>Perfil público:</b>
-        <select name="perfil">      
+        <select name="perfil">
           <option value="no" <?php if($_SESSION['perfil'] == 'no') echo "selected"; ?>>no</option>
           <option value="si" <?php if($_SESSION['perfil'] == 'si') echo "selected"; ?>>si</option>
         </select><br><br>
 
         <b>Zona horaria:</b>
-        <select name="zona">      
+        <select name="zona">
           <option value="GMT-2" <?php if($_SESSION['zona'] == 'GMT-2') echo "selected"; ?>>GMT-2</option>
           <option value="GMT-1" <?php if($_SESSION['zona'] == 'GMT-1') echo "selected"; ?>>GMT-1</option>
           <option value="GMT"   <?php if($_SESSION['zona'] == 'GMT') echo "selected"; ?>>GMT</option>
@@ -61,7 +72,7 @@ echo "</pre>";
         <a href="mostrar.php">Mostrar preferencias</a>
 
       </form>
-      
+
     </fieldset>
   </body>
 </html>

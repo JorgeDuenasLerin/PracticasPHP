@@ -1,49 +1,21 @@
-<?php 
+<?php
+
+include_once('conexMetodosBBDD.php');
+$instancia = new conexMetodosBBDD();
+$listado_productos = $instancia->mostrarProductos();
+
 
 session_start();
 //session_destroy();
 
+
+
 if(isset($_POST['añadir'])){
-  if( isset($_POST['Tomates'])){
-    if(!empty($_POST['Tomates'])){
-      if($_SESSION["Tomates"] != 0){
-        $_SESSION["Tomates"] = $_POST['Tomates'];
-      } else {
-        //unset( $_SESSION["Tomates"] );  
-        $_SESSION["Tomates"] = ""; 
-      }
-    }
+  if(!isset($_SESSION['carrito'])){
+    $_SESSION['carrito'] = [];
   }
 
-  if( isset($_POST['Naranjas'])){
-    if(!empty($_POST['Naranjas'])){
-      //if($_SESSION["Naranjas"] != 0){
-        $_SESSION["Naranjas"] = $_POST['Naranjas'];
-      //} else {
-        //unset( $_SESSION["Naranjas"] );  
-      //}
-    }
-  }
-
-  if( isset($_POST['Tomates_pare'])){
-    if(!empty($_POST['Tomates_pare'])){
-      //if($_SESSION["Tomates_pare"] != 0){
-        $_SESSION["Tomates_pare"] = $_POST['Tomates_pare'];
-      //} else {
-        //unset( $_SESSION["Tomates_pare"] );  
-      //}
-    }
-  }
-
-  if( isset($_POST['Pimientos verde'])){
-    if(!empty($_POST['Pimientos verde'])){
-      //if($_SESSION["Pimientos verde"] != 0){
-        $_SESSION["Pimientos verde"] = $_POST['Pimientos verde'];
-      //} else {
-        //unset( $_SESSION["Pimientos verde"] );  
-      //}
-    }
-  }
+  $_SESSION['carrito'][] = $_POST;
 }
 
 echo "<pre>";
@@ -101,18 +73,23 @@ echo "</pre>";
         <input type="submit" name="añadir" value="Añadir">
       </form>
     </div> -->
-    <?php 
-    include_once('conexMetodosBBDD.php');
-    $instancia = new conexMetodosBBDD();
-    $consulta = $instancia->mostrarProductos();
-    foreach ($consulta as $key => $value) {
+    <?php
+
+    foreach ($listado_productos as $producto) {
+      echo "<pre>";
+      print_r($producto);
+      echo "</pre>";
       ?>
+
       <div class="card">
-      <h5><?= $value['nombre']?> <img class="eco" src="imgs/leaf.png"></h5>
-      <p>Producto de primera calidad traido de ...<?= $value['descripcion']?></p>
-      <p><?= $value['precio']?> €</p>
+      <h5><?= $producto['nombre']?> <img class="eco" src="imgs/leaf.png"></h5>
+      <p><?= $producto['descripcion']?></p>
+      <p><?= $producto['precio']?> €</p>
       <form class="anade-producto" method="post">
-        <input class="cantidad" type="number" name="<?= $value['nombre']?>" value="1">
+        <input type="hidden" name="cod" value="<?= $producto['id']?>">
+        <input type="hidden" name="nombre" value="<?= $producto['nombre']?>">
+        <input type="hidden" name="precio" value="<?= $producto['precio']?>">
+        <input class="cantidad" type="number" name="cantidad" value="1">
         <input type="submit" name="añadir" value="Añadir">
       </form>
 </div>
@@ -124,11 +101,11 @@ echo "</pre>";
   <div class="rightcolumn">
     <div class="card">
       <h2>Tu compra</h2>
-      <?php 
+      <?php
       $sumaTotal = "";
       // if(isset($_SESSION['Tomates'])){
       //   $cantidad = $_SESSION['Tomates'];
-        
+
       //   $total = $cantidad*1.95;
 
       //   echo "<p>Tomates x$cantidad (1.95)";
@@ -136,7 +113,7 @@ echo "</pre>";
 
       //   $sumaTotal=$total;
       // }
-      
+
       // if(isset($_SESSION['Naranjas'])){
       //   $cantidad = $_SESSION['Naranjas'];
 
@@ -150,23 +127,23 @@ echo "</pre>";
 
       if(isset($_SESSION['Tomates_pare'])){
           $cantidad = $_SESSION['Tomates_pare'];
-          
+
           $total = $cantidad*1.95;
-  
+
           echo "<p>Tomates pare x$cantidad (1.95)";
           echo "<span class=\"precio-carrito\">$total</p>";
-  
+
           $sumaTotal=$total;
         }
-        
+
         if(isset($_SESSION['Pimientos verde'])){
           $cantidad = $_SESSION['Pimientos verde'];
-  
+
           $total = $cantidad*2.35;
-  
+
           echo "<p>Pimientos verde x$cantidad (2.35€)";
           echo "<span class=\"precio-carrito\">$total</p>";
-  
+
           $sumaTotal=$sumaTotal+$total;
         }
       ?>
@@ -175,9 +152,14 @@ echo "</pre>";
       <p>Tomates x4<span class="precio-carrito">5€</span></p>
       <p>Tomates x4<span class="precio-carrito">5€</span></p>
       <p>Tomates x4<span class="precio-carrito">5€</span></p> -->
+      <?php
+      echo "<pre>";
+      print_r($_SESSION);
+      echo "</pre>";
+      ?>
       <p class="separador">&nbsp;</p>
       <p>Total<span class="precio-carrito"><?=$sumaTotal?>
-      <?php 
+      <?php
       // $sumaTotal=0;
       // foreach ($_SESSION as $key => $value) {
       //   $sumaTotal = $sumaTotal + $value;
