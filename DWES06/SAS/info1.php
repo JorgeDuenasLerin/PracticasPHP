@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Proyecto de frutería</title>
+  <title>Proyecto de fotos</title>
   <link rel="stylesheet" href="css/estilos.css">
   <link rel="stylesheet" href="css/especifico.css">
 </head>

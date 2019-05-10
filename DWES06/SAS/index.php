@@ -1,8 +1,37 @@
+<?php 
+include_once('conexMetodosBBDD.php');
+
+$usuario = "";
+$logeado=false;
+
+if(isset($_POST['login'])){
+  echo "<h1>entro </h1>";
+  if(!empty($_POST['usu'])){
+    $usuario = $_POST['usu'];
+    if(!empty($_POST['pass']) && $_POST['pass'] != ""){
+      echo "<h1>entro </h1>";
+      $instancia = new conexMetodosBBDD();
+      $passCifrada = password_hash($_POST['pass'], PASSWORD_DEFAULT);
+      echo "<b>POST</b><br>";
+      echo "$usuario -> $passCifrada <br>";
+      echo "<b>BBDD</b><br>";
+      $passbbdd = $passCifrada = password_hash('1234', PASSWORD_DEFAULT);
+      echo "$usuario -> $passbbdd <br>";
+
+      $usuarioRegistrado = $instancia->consultarUsuario($usuario,  $passCifrada);
+      echo "<h1>$usuarioRegistrado</h1>";
+      if(!empty($usuarioRegistrado)) $logeado=true;
+    }
+  }
+
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Proyecto de frutería</title>
+  <title>Proyecto de fotos</title>
   <link rel="stylesheet" href="css/estilos.css">
   <link rel="stylesheet" href="css/especifico.css">
 </head>
@@ -33,14 +62,26 @@
   </div>
   <div class="rightcolumn">
     <div class="card">
+    <?php 
+    if($logeado){
+    ?>
+      <h2><?= $usuario ?></h2>
+      <p>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/User_Circle.png" alt="">
+      </p>
+    <?php 
+    } else {
+    ?>
       <h2>Login</h2>
       <p>
-        <form class="form-login" action="" method="post">
-          <input type="text" name="" value="" placeholder="usuario"></br>
-          <input type="password" name="" value=""  placeholder="contraseña"></br>
-          <button type="button" name="button" value="">Login</button>
+        <form class="form-login" method="post">
+          <input type="text" name="usu" value="" placeholder="usuario"></br>
+          <input type="password" name="pass" value=""  placeholder="contraseña"></br>
+          <input type="submit" name="login" value="Login">
         </form>
       </p>
+    <?php } ?>
+
     </div>
   </div>
 </div>
