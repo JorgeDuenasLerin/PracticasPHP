@@ -3,36 +3,42 @@ include_once('conexMetodosBBDD.php');
 $instancia = new conexMetodosBBDD();
 $listado_productos = $instancia->mostrarProductos();
 
-echo "<pre>";
-print_r($_POST);
-echo "</pre>";
+// echo "<pre>";
+// echo "<B>POST</B><BR>";
+// print_r($_POST);
+// echo "</pre>";
 
-if(isset($_SESSION)){
-echo "<pre>";
-print_r($_SESSION);
-echo "</pre>";
-}
+
 
 session_start();
 //session_destroy();
-$array = [];
+
 if(isset($_POST['añadir'])){
   if(!isset($_SESSION['carrito'])){
-   // $_SESSION['carrito'] = [];
+    $_SESSION['carrito'] = [];
   }
-  $_SESSION['carrito'][] = $_POST;
+  //$_SESSION['carrito'][] = $_POST;
 
-  
   $cod = $_POST['cod'];
-  if(!array_key_exists($cod, $array)){
-    $array[$cod] = $_POST;
+  
+  if(array_key_exists($cod, $_SESSION["carrito"])){
+    $_SESSION["carrito"][$cod][2] += $_POST["cantidad"];
+  } else {
+    $nuevo_dato = [];
+    $nuevo_dato[0]=$_POST["nombre"];
+    $nuevo_dato[1]=$_POST["precio"];
+    $nuevo_dato[2]=$_POST["cantidad"];
+
+    $_SESSION["carrito"][$cod] = $nuevo_dato;
   }
   
-  echo "<pre>";
-  print_r($array);
-  echo "</pre>";
-  
-  //header('location: index.php');
+  // if(isset($_SESSION)){
+  //   echo "<pre>";
+  //   echo "<B>SESSION</B><BR>";
+  //   print_r($_SESSION);
+  //   echo "</pre>";
+  // }
+
 }
 
 ?>
@@ -112,15 +118,32 @@ if(isset($_POST['añadir'])){
     <div class="card">
       <h2>Tu compra</h2>
       <?php
-      $sumaTotal="";
-      $array = [];
-      // foreach ($_SESSION as $value1) {
-      //   $fila = $value1;
-      //   foreach ($fila as $valor) {
-      //     foreach ($valor as $key => $value) {
-      //       echo "$key -> $value";
-      //       echo "<br>";
+      $sumaTotal=0;
+      if(isset($_SESSION)){
+        foreach ($_SESSION as $fila) {
+          foreach ($fila as $clave => $valor) {
+            //print_r($valor);
+            ?>
+             <p><?=$valor[0]?> x<?=$valor[2]?><span class="precio-carrito"><?=$valor[1]*$valor[2]?> €</span></p>
+            <?php
+            $sumaTotal += $valor[1]*$valor[2];
+          }
+        }
+      }
+
+
+      // $precio = 0;
+      // $cantidad = 0;
+      // foreach ($_SESSION['carrito'] as $fila) {
+      //   foreach ($fila as $clave => $valor) {
+      //     //echo "$clave -> $valor <br>";
+      //     if($clave == 1) $precio = $valor;
+      //     if($clave == 2) {
+      //       $cantidad = $valor;
+      //       //echo "precio: $precio";
+      //       //echo "cantidad: $cantidad";
       //     }
+
       //   }
       // }
       ?>
@@ -129,22 +152,9 @@ if(isset($_POST['añadir'])){
       <p>Tomates x4<span class="precio-carrito">5€</span></p>
       <p>Tomates x4<span class="precio-carrito">5€</span></p>
       <p>Tomates x4<span class="precio-carrito">5€</span></p> -->
-      <?php
-      foreach ($array as  $value) {
-        echo "<pre>";
-        print_r($array);
-        echo "</pre>";
-      }
-      ?>
+
       <p class="separador">&nbsp;</p>
-      <p>Total<span class="precio-carrito"><?=$sumaTotal?>
-      <?php
-      // $sumaTotal=0;
-      // foreach ($_SESSION as $key => $value) {
-      //   $sumaTotal = $sumaTotal + $value;
-      // }
-      // echo $sumaTotal;
-      ?>
+      <p>Total<span class="precio-carrito"><?=$sumaTotal?> €
       </span></p>
       <p>&nbsp;</p>
       <a class="button button-100" href="">Confirmar compra</a>

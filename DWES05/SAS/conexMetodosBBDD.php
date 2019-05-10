@@ -11,7 +11,7 @@ class conexMetodosBBDD {
 
         try {
             $this->dbPDO = new PDO(
-              "mysql:host=localhost;dbname=$db_name",
+              "mysql:host=localhost;dbname=$db_name;charset=utf8",
               $db_user,
               $db_pass
             );

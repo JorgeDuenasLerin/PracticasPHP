@@ -11,7 +11,7 @@ class conexMetodosBBDD {
 
         try {
             $this->dbPDO = new PDO(
-              "mysql:host=localhost;dbname=$db_name",
+              "mysql:host=localhost;dbname=$db_name;charset=utf8",
               $db_user,
               $db_pass
             );
@@ -39,18 +39,6 @@ class conexMetodosBBDD {
         
         if($sentenciaSQL){
            return $resultado = $sentenciaSQL->fetchAll(PDO::FETCH_ASSOC);
-        } else {
-            print_r($this->dbPDO->errorInfo());
-        }
-    }
-
-    public function probando(String $usuario){
-        //$sentenciaSQL=$this->dbPDO->query('SELECT * FROM agenda')->fetchAll();
-        $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE nombre = :usuario");
-        $rs->bindParam(':usuario', $usuario);
-        
-        if($rs){
-           return $resultado = $rs->fetchAll(PDO::FETCH_ASSOC);
         } else {
             print_r($this->dbPDO->errorInfo());
         }
