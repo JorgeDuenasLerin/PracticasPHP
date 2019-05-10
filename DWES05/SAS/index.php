@@ -1,30 +1,40 @@
 <?php
-
 include_once('conexMetodosBBDD.php');
 $instancia = new conexMetodosBBDD();
 $listado_productos = $instancia->mostrarProductos();
-
-
-session_start();
-//session_destroy();
-
-
-
-if(isset($_POST['añadir'])){
-  if(!isset($_SESSION['carrito'])){
-    $_SESSION['carrito'] = [];
-  }
-
-  $_SESSION['carrito'][] = $_POST;
-}
 
 echo "<pre>";
 print_r($_POST);
 echo "</pre>";
 
+if(isset($_SESSION)){
 echo "<pre>";
 print_r($_SESSION);
 echo "</pre>";
+}
+
+session_start();
+//session_destroy();
+$array = [];
+if(isset($_POST['añadir'])){
+  if(!isset($_SESSION['carrito'])){
+   // $_SESSION['carrito'] = [];
+  }
+  $_SESSION['carrito'][] = $_POST;
+
+  
+  $cod = $_POST['cod'];
+  if(!array_key_exists($cod, $array)){
+    $array[$cod] = $_POST;
+  }
+  
+  echo "<pre>";
+  print_r($array);
+  echo "</pre>";
+  
+  //header('location: index.php');
+}
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -76,9 +86,9 @@ echo "</pre>";
     <?php
 
     foreach ($listado_productos as $producto) {
-      echo "<pre>";
-      print_r($producto);
-      echo "</pre>";
+      // echo "<pre>";
+      // print_r($producto);
+      // echo "</pre>";
       ?>
 
       <div class="card">
@@ -102,50 +112,17 @@ echo "</pre>";
     <div class="card">
       <h2>Tu compra</h2>
       <?php
-      $sumaTotal = "";
-      // if(isset($_SESSION['Tomates'])){
-      //   $cantidad = $_SESSION['Tomates'];
-
-      //   $total = $cantidad*1.95;
-
-      //   echo "<p>Tomates x$cantidad (1.95)";
-      //   echo "<span class=\"precio-carrito\">$total</p>";
-
-      //   $sumaTotal=$total;
+      $sumaTotal="";
+      $array = [];
+      // foreach ($_SESSION as $value1) {
+      //   $fila = $value1;
+      //   foreach ($fila as $valor) {
+      //     foreach ($valor as $key => $value) {
+      //       echo "$key -> $value";
+      //       echo "<br>";
+      //     }
+      //   }
       // }
-
-      // if(isset($_SESSION['Naranjas'])){
-      //   $cantidad = $_SESSION['Naranjas'];
-
-      //   $total = $cantidad*2.35;
-
-      //   echo "<p>Naranjas x$cantidad (2.35€)";
-      //   echo "<span class=\"precio-carrito\">$total</p>";
-
-      //   $sumaTotal=$sumaTotal+$total;
-      // }
-
-      if(isset($_SESSION['Tomates_pare'])){
-          $cantidad = $_SESSION['Tomates_pare'];
-
-          $total = $cantidad*1.95;
-
-          echo "<p>Tomates pare x$cantidad (1.95)";
-          echo "<span class=\"precio-carrito\">$total</p>";
-
-          $sumaTotal=$total;
-        }
-
-        if(isset($_SESSION['Pimientos verde'])){
-          $cantidad = $_SESSION['Pimientos verde'];
-
-          $total = $cantidad*2.35;
-
-          echo "<p>Pimientos verde x$cantidad (2.35€)";
-          echo "<span class=\"precio-carrito\">$total</p>";
-
-          $sumaTotal=$sumaTotal+$total;
-        }
       ?>
       <!-- <p>Tomates x4<span class="precio-carrito">5€</span></p>
       <p>Tomates x4<span class="precio-carrito">5€</span></p>
@@ -153,9 +130,11 @@ echo "</pre>";
       <p>Tomates x4<span class="precio-carrito">5€</span></p>
       <p>Tomates x4<span class="precio-carrito">5€</span></p> -->
       <?php
-      echo "<pre>";
-      print_r($_SESSION);
-      echo "</pre>";
+      foreach ($array as  $value) {
+        echo "<pre>";
+        print_r($array);
+        echo "</pre>";
+      }
       ?>
       <p class="separador">&nbsp;</p>
       <p>Total<span class="precio-carrito"><?=$sumaTotal?>
