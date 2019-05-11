@@ -17,11 +17,11 @@
 
 			try{
 
-				$this->dbPDO = new PDO("mysql:host=localhost;dbname=$db_name",$db_user,$db_pass);
+				$this->dbPDO = new PDO("mysql:host=localhost;dbname=$db_name;charset=utf8",$db_user,$db_pass);
 				$this->dbPDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 			}catch(PDOException $ex){
-				echo "<p> No se puede conectar a: ".$ex->getMesagge()."</p>";
+				echo "<p> No se puede conectar a: ".$ex->getMessage()."</p>";
 			}
 
 		}//__construct()
