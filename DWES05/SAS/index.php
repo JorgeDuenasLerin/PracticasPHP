@@ -32,13 +32,52 @@ if(isset($_POST['añadir'])){
     $_SESSION["carrito"][$cod] = $nuevo_dato;
   }
   
-  // if(isset($_SESSION)){
-  //   echo "<pre>";
-  //   echo "<B>SESSION</B><BR>";
-  //   print_r($_SESSION);
-  //   echo "</pre>";
-  // }
+  if(isset($_SESSION)){
+    echo "<pre>";
+    echo "<B>SESSION</B><BR>";
+    print_r($_SESSION);
+    echo "</pre>";
+  }
+}
 
+// confirmar es una etiqueta a donde la rediciono a la misma pagina con parametros en el get, la guardo en post y la borro redireccionando
+if(isset($_GET['confirmar'])){
+  echo "<H3>entro en GET CONFIRMAR</H3>";
+  $_POST['confirmar']=$_GET['confirmar'];
+  header( "refresh:3;url=index.php");
+}
+// si esta confirmar en post y el carrito esta inicializado si que permito llevar a la pagina de confrimarCompra
+if(isset($_POST['confirmar']) && isset($_SESSION['carrito'])){
+  echo "<H3>entro en POST CONFIRMAR</H3>";
+  header( "refresh:3;url=confirmarCompra.php");
+}
+
+// borrar un producto de la lista de la compra
+if(isset($_GET['borrar'])){
+  echo "<H3>entro en GET BORRAR</H3>";
+  $_POST['borrar']=$_GET['borrar'];
+  header( "refresh:3;url=index.php");
+}
+// si esta borrar en post borro el producto
+if(isset($_POST['borrar'])){
+  echo "<H3>entro en POST BORRA</H3>";
+  unset($_SESSION['carrito'][$_POST['borrar']]); 
+  //$_SESSION['carrito'][$_POST['borrar']] = array();
+}
+
+// restar un producto de la lista de la compra
+if(isset($_GET['restar'])){
+  echo "<H3>entro en GET RESTAR</H3>";
+  $_POST['restar']=$_GET['restar'];
+  header( "refresh:3;url=index.php");
+}
+// si esta restar en post borro el producto
+if(isset($_POST['restar']) && isset($_SESSION["carrito"])){
+  echo "<H3>entro en POST RESTAR</H3>";
+  $decremento = $_SESSION["carrito"][$_POST["restar"]][2];
+  $decremento = $decremento-1;
+  $_SESSION["carrito"][$_POST["restar"]][2] = $decremento;
+  header( "refresh:3;url=index.php");
 }
 
 ?>
@@ -59,17 +98,12 @@ if(isset($_POST['añadir'])){
 
 <div class="topnav">
   <a href="#">Compra</a>
-  <!---
-  <a href="#">Link</a>
-  <a href="#">Link</a>
-  <a href="#" style="float:right">Link</a>
-  --->
+  <!--- <a href="#" style="float:right">Link</a> --->
 </div>
 
 <div class="row">
   <div class="leftcolumn">
     <!-- <div class="card">
-
       <h5>Tomates (Verduras)<img class="eco" src="imgs/leaf.png"></h5>
       <p>Producto de primera calidad traido de ...</p>
       <p>1.95 €</p>
@@ -78,25 +112,13 @@ if(isset($_POST['añadir'])){
         <input type="submit" name="añadir" value="Añadir">
       </form>
     </div>
-
-    <div class="card">
-
-      <h5>Naranja (Frutas)<img class="eco" src="imgs/leaf.png"></h5>
-      <p>Producto de primera calidad traido de ...</p>
-      <p>2.35 €</p>
-      <form class="anade-producto" method="post">
-        <input class="cantidad" type="number" name="Naranjas" value="1">
-        <input type="submit" name="añadir" value="Añadir">
-      </form>
-    </div> -->
+    -->
     <?php
-
     foreach ($listado_productos as $producto) {
       // echo "<pre>";
       // print_r($producto);
       // echo "</pre>";
       ?>
-
       <div class="card">
       <h5><?= $producto['nombre']?> <img class="eco" src="imgs/leaf.png"></h5>
       <p><?= $producto['descripcion']?></p>
@@ -108,12 +130,12 @@ if(isset($_POST['añadir'])){
         <input class="cantidad" type="number" name="cantidad" value="1">
         <input type="submit" name="añadir" value="Añadir">
       </form>
-</div>
+      </div>
       <?php
     }
     ?>
-
   </div>
+  
   <div class="rightcolumn">
     <div class="card">
       <h2>Tu compra</h2>
@@ -124,6 +146,8 @@ if(isset($_POST['añadir'])){
           foreach ($fila as $clave => $valor) {
             //print_r($valor);
             ?>
+            <a href="index.php?borrar=<?=$clave?>"><img class="eco" style="float:left;" src="https://cdn0.iconfinder.com/data/icons/round-ui-icons/512/close_red.png" alt="eliminar producto"></a>
+            <a href="index.php?restar=<?=$clave?>"><img class="eco" style="float:left;" src="https://img.pngio.com/dash-minus-negative-remove-removed-subtract-subtraction-icon-subtraction-png-512_512.png" alt="restar cantidad"></a>
              <p><?=$valor[0]?> x<?=$valor[2]?><span class="precio-carrito"><?=$valor[1]*$valor[2]?> €</span></p>
             <?php
             $sumaTotal += $valor[1]*$valor[2];
@@ -157,7 +181,7 @@ if(isset($_POST['añadir'])){
       <p>Total<span class="precio-carrito"><?=$sumaTotal?> €
       </span></p>
       <p>&nbsp;</p>
-      <a class="button button-100" href="">Confirmar compra</a>
+      <a class="button button-100" href="index.php?confirmar=true">Confirmar compra</a>
     </div>
 
     <div class="card">
