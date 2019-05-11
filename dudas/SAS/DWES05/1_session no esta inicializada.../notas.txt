@@ -1,0 +1,3 @@
+DUDA - no existe la session
+no existe la session['carrito'] en confirmarCompra.php, pero sin embargo me voy al ejercicio DWES04 y si me carga la sesión con el carrito
+No se por qué pasa, ¿sabes qué puede ser?
