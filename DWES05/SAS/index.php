@@ -42,42 +42,50 @@ if(isset($_POST['añadir'])){
 
 // confirmar es una etiqueta a donde la rediciono a la misma pagina con parametros en el get, la guardo en post y la borro redireccionando
 if(isset($_GET['confirmar'])){
-  echo "<H3>entro en GET CONFIRMAR</H3>";
+  echo "<H3>index.php - entro en GET CONFIRMAR</H3>";
   $_POST['confirmar']=$_GET['confirmar'];
-  header( "refresh:3;url=index.php");
+  header( "refresh:1;url=index.php");
 }
 // si esta confirmar en post y el carrito esta inicializado si que permito llevar a la pagina de confrimarCompra
 if(isset($_POST['confirmar']) && isset($_SESSION['carrito'])){
-  echo "<H3>entro en POST CONFIRMAR</H3>";
-  header( "refresh:3;url=confirmarCompra.php");
+  echo "<H3>index.php - entro en POST CONFIRMAR</H3>";
+  header( "refresh:1;url=confirmarCompra.php");
 }
 
 // borrar un producto de la lista de la compra
 if(isset($_GET['borrar'])){
-  echo "<H3>entro en GET BORRAR</H3>";
+  echo "<H3>index.php - entro en GET BORRAR</H3>";
   $_POST['borrar']=$_GET['borrar'];
-  header( "refresh:3;url=index.php");
+  header( "refresh:1;url=index.php");
 }
 // si esta borrar en post borro el producto
 if(isset($_POST['borrar'])){
-  echo "<H3>entro en POST BORRA</H3>";
+  echo "<H3>index.php - entro en POST BORRA</H3>";
   unset($_SESSION['carrito'][$_POST['borrar']]); 
   //$_SESSION['carrito'][$_POST['borrar']] = array();
 }
 
 // restar un producto de la lista de la compra
 if(isset($_GET['restar'])){
-  echo "<H3>entro en GET RESTAR</H3>";
+  echo "<H3>index.php - entro en GET RESTAR</H3>";
   $_POST['restar']=$_GET['restar'];
-  header( "refresh:3;url=index.php");
+  header( "refresh:1;url=index.php");
 }
 // si esta restar en post borro el producto
 if(isset($_POST['restar']) && isset($_SESSION["carrito"])){
-  echo "<H3>entro en POST RESTAR</H3>";
+  echo "<H3>confirmarCompra.php entro en POST RESTAR</H3>";
   $decremento = $_SESSION["carrito"][$_POST["restar"]][2];
   $decremento = $decremento-1;
   $_SESSION["carrito"][$_POST["restar"]][2] = $decremento;
-  header( "refresh:3;url=index.php");
+  if($_SESSION["carrito"][$_POST["restar"]][2] == 0){
+    if($_POST["restar"] == 0){
+      array_shift($_SESSION["carrito"]);
+    } else {
+      array_splice($_SESSION["carrito"], $_POST['restar'], 1);
+    }
+  }
+  //unset($_SESSION['carrito'][$_POST['restar']]);
+  header( "refresh:1;url=confirmarCompra.php");
 }
 
 ?>
