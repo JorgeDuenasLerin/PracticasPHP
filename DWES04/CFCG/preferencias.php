@@ -1,29 +1,67 @@
 <?php 
 
-	function cleanInput($data){
-		$data = trim($data);
-		$data = stripslashes($data);
-		$data = htmlspecialchars($data);
+session_start();
 
-		return $data;
-	}
-	if($_SERVER['REQUEST_METHOD'] === 'POST'){
-		if(isset($_POST['enviar'])){
-			if(isset($_POST['idioma']) && isset($_POST['perfil']) && isset($_POST['hora'])){
-				$idioma = cleanInput($_POST['idioma']);
-				$perfil = cleanInput($_POST['perfil']);
-				$hora = cleanInput($_POST['hora']);
+$idioma="Español";
+$perfil="si";
+$hora="GMT-2";
 
-				session_id('recuerdo');
-				session_start();
-				if(empty($_SESSION)){
-					$_SESSION['idioma'] ="$idioma";
-					$_SESSION['perfil'] = $perfil;
-					$_SESSION['hora'] = $hora;
-				}
-			}
-		}
-	}
+
+
+if(isset($_POST['enviar'])){/*ENVIAN UN POST*/
+	$_SESSION['idioma'] = $_POST['idioma'];
+	$_SESSION['perfil'] = $_POST['perfil'];
+	$_SESSION['hora'] = $_POST['hora'];
+
+	$idioma = $_POST['idioma'];
+	$perfil = $_POST['perfil'];
+	$hora = $_POST['hora'];
+
+	$span = "Información guardada en la sesión";
+}
+
+if(isset($_SESSION['idioma']) && isset($_SESSION['perfil']) && isset($_SESSION['hora'])){
+	$idioma = $_SESSION['idioma'];
+	$perfil = $_SESSION['perfil'];
+	$hora = $_SESSION['hora'];
+}
+
+// Variable idioma:
+// .- Sinse carga la página por primera vez tendrá el valor por defecto.
+// .- Si están enviando el form, se establece la sessión y la variable idioma se queda bien.
+// .- Me visitan y antes han establecido su preferencia la cargo en la variable.
+
+
+
+
+
+
+	// function cleanInput($data){
+	// 	$data = trim($data);
+	// 	$data = stripslashes($data);
+	// 	$data = htmlspecialchars($data);
+
+	// 	return $data;
+	// }
+
+	// if($_SERVER['REQUEST_METHOD'] === 'POST'){
+	// 	if(isset($_POST['enviar'])){
+	// 		if(isset($_POST['idioma']) && isset($_POST['perfil']) && isset($_POST['hora'])){
+	// 			$idioma = cleanInput($_POST['idioma']);
+	// 			$perfil = cleanInput($_POST['perfil']);
+	// 			$hora = cleanInput($_POST['hora']);
+
+	// 			session_start();
+	// 			if(empty($_SESSION)){
+	// 				$_SESSION['idioma'] ="$idioma";
+	// 				$_SESSION['perfil'] = $perfil;
+	// 				$_SESSION['hora'] = $hora;
+	// 			}else{
+	//
+	//}
+	// 		}
+	// 	}
+	// }
 
  ?>
 
@@ -37,54 +75,34 @@
   <body>
   	<fieldset>
   		<legend>Preferencias</legend>
-	<form action="" method="post">
-		<?php if(!empty($_SESSION)){ ?>
-			
-			<span>Información guardada en la sesión</span><br><br>
-
-		<?php } ?>
+	<form action="preferencias.php" method="post">
+		<span><?=$span?></span><br><br>
 		
 		<label class="etiqueta">Idioma:</label><br>
 		<select name="idioma" id="">
-			<?php if(!empty($_SESSION) && ($_SESSION['idioma'])=== $_POST['idioma'])  {?>
-					
-					<option value="<?= $_SESSION['idioma'] ?> "><?= $_SESSION['idioma'] ?> </option>
 
-			<?php }else{ ?>
-						<option value="Español">Español</option>
-						<option value="Inglés">Inglés</option>
-			<?php } ?>
+			<option value="Español" <?php if($idioma=="Español") echo "selected"; ?>>Español</option>
+			<option value="Inglés" <?php if($idioma=="Inglés") echo "selected"; ?>>Inglés</option>
 		</select><br><br>
+		
 		<label class="etiqueta">Perfil público:</label><br>
 		<select name="perfil" id="">
-			<?php if(!empty($_SESSION) && ($_SESSION['perfil'])=== $_POST['perfil'])  {?>
-					
-					<option value="<?= $_SESSION['perfil'] ?> "><?= $_SESSION['perfil'] ?> </option>
-
-			<?php }else{ ?>
-						<option value="si">si</option>
-						<option value="no">no</option>
-			<?php } ?>
+			<option value="si" <?php if($perfil=="si") echo "selected" ?> >si</option>
+			<option value="no" <?php if($perfil=="no") echo "selected" ?> >no</option>
 		</select><br><br>
+		
 		<label class="etiqueta">Zona Horaria:</label><br>
 		<select name="hora" id="">
-			<?php if(!empty($_SESSION) && ($_SESSION['hora'])=== $_POST['hora'])  {?>
-					
-					<option value="<?= $_SESSION['hora'] ?> "><?= $_SESSION['hora'] ?> </option>
-
-			<?php }else{ ?>
-					<option value="GMT-2">GMT-2</option>
-					<option value="GMT-1">GMT-1</option>
-					<option value="GMT">GMT</option>
-					<option value="GMT+1">GMT+1</option>
-					<option value="GMT+2">GMT+2</option>
-			<?php } ?>
+			<option value="GMT-2" <?php if($hora=="GMT-2") echo "selected" ?> >GMT-2</option>
+			<option value="GMT-1" <?php if($hora=="GMT-1") echo "selected" ?> >GMT-1</option>
+			<option value="GMT" <?php if($hora=="GMT") echo "selected" ?> >GMT</option>
+			<option value="GMT+1" <?php if($hora=="GMT+1") echo "selected" ?> >GMT+1</option>
+			<option value="GMT+2" <?php if($hora=="GMT+2") echo "selected" ?> >GMT+2</option>
 		</select><br><br>
 		<input type="submit" name="enviar" value="Establecer preferencias">
 	</form>
 
-	<!-- <a href="mostrar.php?idioma=<?= $_SESSION['idioma'] ?> & perfil= <?=$perfil?> && hora=<?=$hora?>">Mostrar preferencias</a> -->
-	<a href="mostrar.php?' . SID . '">Mostrar preferencias</a>
+	<a href="mostrar.php">Mostrar preferencias</a>
 	</fieldset>
 </body>
 </html>
