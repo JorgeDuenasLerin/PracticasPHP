@@ -1,10 +1,10 @@
 <?php 
 session_start();
 //if(isset($_SESSION['carrito'])){
-    echo "<pre>";
-    echo "<B>SESSION</B><BR>";
-    print_r($_SESSION);
-    echo "</pre>";
+    // echo "<pre>";
+    // echo "<B>SESSION</B><BR>";
+    // print_r($_SESSION);
+    // echo "</pre>";
   //}
 
 if(!isset($_SESSION['carrito']) || empty($_SESSION['carrito'])){ // 
@@ -50,7 +50,7 @@ if(isset($_POST['restar']) && isset($_SESSION["carrito"])){
 
 if(isset($_GET['procesar'])){
   echo "<H3>confirmarCompra.php entro en GET PROCESAR</H3>";
-  header("refresh:3;url=index.php");
+  header("refresh:3000000;url=index.php");
   session_destroy();
 }
 
@@ -100,7 +100,7 @@ if(isset($_GET['procesar'])){
       <p class="separador">&nbsp;</p>
       <p>Total<span class="precio-carrito">5€</span></p>
       <p>&nbsp;</p>
-      <a class="button button-100" href="confirmarCompra?procesar=true.php">Confirmar compra</a>
+      <a class="button button-100" href="confirmarCompra.php?procesar=true">Confirmar compra</a>
     </div> 
   </div>
   
@@ -108,7 +108,7 @@ if(isset($_GET['procesar'])){
 <?php if(isset($_GET['procesar'])) { ?>
 <div class="" style="margin:0 10%;">
     <div class="card">
-      <p><img src="http://www.cardgamedb.com/deckbuilders/images/card-loading-high-new.gif" alt="gif carga"> Procesando pedido...</p>
+      <p><img src="http://www.cardgamedb.com/deckbuilders/images/card-loading-high-new.gif" alt="gif carga" width="5%"> Procesando pedido...</p>
 
     </div>
 </div>

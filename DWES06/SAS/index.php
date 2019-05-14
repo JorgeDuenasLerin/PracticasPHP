@@ -1,8 +1,9 @@
 <?php 
 include_once('conexMetodosBBDD.php');
 
-$existeUsuario = false;
+DEFINE('webpage', 'index.php');
 $usuario  = "";
+
 
 echo "<pre>";
 print_r($_POST);
@@ -33,7 +34,7 @@ if(isset($_POST['login'])){
       if($existeUsuario){
         //echo "<h1>usuario logeado</h1>";
         session_start();
-        $_SESSION['log'] = true;
+        $_SESSION['logged'] = true;
       } else {
         // echo "<h1>usuario o pass incoorrecta</h1>";
       }
@@ -51,6 +52,20 @@ if(isset($_GET['denegado'])){
 if(isset($_POST['denegado'])){
   echo "<h1>ACCESO DENEGADO</h1>";
   echo "<h1>".$_POST['denegado']."</h1>";
+}
+
+
+if(isset($_GET['logout'])){
+  $_POST['logout'] = $_GET['logout'];
+  header("Location: ". webpage);
+  // LAS CONSTANTES VAN SIN EL $ DELANTE
+  die();
+}
+
+if(isset($_POST['logout'])){
+  // echo "<h1>ACCESO POST logout</h1>";
+  //unset($_SESSION['log']);
+  $_SESSION['logged']=false;
 }
 
 
@@ -77,26 +92,39 @@ if(isset($_POST['denegado'])){
   <a href="info3.php">Info3</a>
   <a href="info4.php">Info4</a>
   <a href="info5.php">Info5</a>
-  <a href="#" style="float:right">Link</a>
+  <?php if($_SESSION['logged'] == true){ ?>
+    <a href="<?=$webpage?>?logout" style="float:right">Log out</a>
+  <?php } else { ?>
+    <a href="login.php" style="float:right">Sign in</a>
+  <?php } ?>
 </div>
 
 <div class="row">
   <div class="leftcolumn">
+  <?php if($_SESSION['logged'] == true){?>
+    <div class="card">
+      <h2>Bienvenido <?= $usuario?></h2>
+      <h5>Title description, Dec 7, 2017</h5>
+      <img class="todo-espacio" src="https://picsum.photos/1200/1200"/>
+    </div>
+  <?php } else { ?>
     <div class="card">
       <h2>Bienvenido</h2>
       <h5>Title description, Dec 7, 2017</h5>
       <p>Debes iniciar sesión para ver el contenido</p>
       <img class="todo-espacio" src="https://picsum.photos/1200/200" />
     </div>
+  <?php } ?>
   </div>
   <div class="rightcolumn">
     <div class="card">
-    <?php 
-    if($existeUsuario){
+    <?php if($_SESSION['logged'] == true){
     ?>
       <h2><?=  $usuario ?></h2>
       <p>
         <img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/User_Circle.png" alt="" width="70%">
+        <a href="<?=$webpage?>?logout="><img src="https://cdn1.iconfinder.com/data/icons/interface-elements-ii-1/512/Logout-512.png" alt="" width="70%"></a>
+        
       </p>
     <?php 
     } else {
