@@ -26,12 +26,35 @@ class conexMetodosBBDD {
         $this->dbPDO = null; // destruye la conexion 
     }
 
-    /*
-    id INT AUTO_INCREMENT,
-    nombre VARCHAR(80) NOT NULL,
-    telefono VARCHAR(12) NOT NULL,
-    PRIMARY KEY (id)
-    */
+    public function consultarUsuario(String $nombre, String $pass){
+        //$sentenciaSQL=$this->dbPDO->query('SELECT * FROM agenda')->fetchAll();
+      
+        $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE nombre = :nombre");
+        $rs->bindParam(':nombre', $nombre);
+        
+        if(!$rs->execute()){
+            //echo "<h1>conexMetodosBBDD.php - NO Funciona la consulta</h1>";
+            print_r($this->dbPDO->errorInfo());         
+        } else {
+            //echo "<h1>conexMetodosBBDD.php - Funciona la consulta</h1>";
+            $rs->execute();
+            $resultado = $rs->fetchAll(PDO::FETCH_ASSOC);
+            $passbbdd = $resultado[0]['pass'];
+
+            //echo "<p>$nombre</p><p>$pass</p>";
+
+            if(password_verify($pass, $passbbdd)){
+                //echo "<h1>CONTRASEÑA CORRECTA</h1>";
+                return true;
+                //return $resultado;
+            } else {
+                //echo "<h1>CONTRASEÑA INCORRECTA</h1>";
+                return false;
+            }
+            echo "<h1>$passbbdd</h1>";
+            die();
+        }
+    }
 
     public function mostrarProductos(){
         //$sentenciaSQL=$this->dbPDO->query('SELECT * FROM agenda')->fetchAll();
@@ -41,38 +64,6 @@ class conexMetodosBBDD {
            return $resultado = $sentenciaSQL->fetchAll(PDO::FETCH_ASSOC);
         } else {
             print_r($this->dbPDO->errorInfo());
-        }
-    }
-
-    public function consultarUsuario(String $usuario, String $password){
-        //$sentenciaSQL=$this->dbPDO->query('SELECT * FROM agenda')->fetchAll();
-        $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE nombre = :usuario AND pass = :pass");
-        $rs->bindParam(':usuario', $usuario);
-        $rs->bindParam(':pass', $pass);
-        
-        if($rs){
-           return $resultado = $rs->rowCount();
-        } else {
-            print_r($this->dbPDO->errorInfo());
-        }
-    }
-
-
-    public function mostrarFamilia(string $familia){
-        $rs = $this->dbPDO->prepare("SELECT * FROM producto WHERE familia = :familia");
-        $rs->bindParam(':familia', $familia);
-        $rs->execute();
-        if(!$rs){
-            print_r($this->dbPDO->errorInfo());
-            throw new Exception("<h3>Oh noes! There's an error in the query!</h3>");
-            //echo "<h2>no funciona la consulta</h2>";
-        } else {
-            //echo "<h2>funciona la consulta </h2>";
-            //$resultado = $rs->fetchAll(PDO::FETCH_ASSOC);    
-            $resultado = $rs->rowCount();    
-            //print_r($resultado[0]);
-           
-            return $resultado;
         }
     }
 

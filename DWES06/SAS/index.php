@@ -1,30 +1,59 @@
 <?php 
 include_once('conexMetodosBBDD.php');
 
-$usuario = "";
-$logeado=false;
+$existeUsuario = false;
+$usuario  = "";
+
+echo "<pre>";
+print_r($_POST);
+echo "</pre>";
+
+echo "<pre>";
+print_r($_GET);
+echo "</pre>";
+
+if(isset($_SESSION)){
+  echo "<pre>";
+  print_r($_SESSION);
+  echo "</pre>";
+}
 
 if(isset($_POST['login'])){
-  echo "<h1>entro </h1>";
+  
   if(!empty($_POST['usu'])){
     $usuario = $_POST['usu'];
     if(!empty($_POST['pass']) && $_POST['pass'] != ""){
-      echo "<h1>entro </h1>";
+      
       $instancia = new conexMetodosBBDD();
-      $passCifrada = password_hash($_POST['pass'], PASSWORD_DEFAULT);
-      echo "<b>POST</b><br>";
-      echo "$usuario -> $passCifrada <br>";
-      echo "<b>BBDD</b><br>";
-      $passbbdd = $passCifrada = password_hash('1234', PASSWORD_DEFAULT);
-      echo "$usuario -> $passbbdd <br>";
+      $nombre = $_POST['usu'];
+      $pass = $_POST['pass'];
+      // $pass = password_hash($pass, PASSWORD_DEFAULT);
+      $existeUsuario = $instancia->consultarUsuario($nombre, $pass);
 
-      $usuarioRegistrado = $instancia->consultarUsuario($usuario,  $passCifrada);
-      echo "<h1>$usuarioRegistrado</h1>";
-      if(!empty($usuarioRegistrado)) $logeado=true;
+      if($existeUsuario){
+        //echo "<h1>usuario logeado</h1>";
+        session_start();
+        $_SESSION['log'] = true;
+      } else {
+        // echo "<h1>usuario o pass incoorrecta</h1>";
+      }
+      
     }
   }
 
 }
+
+if(isset($_GET['denegado'])){
+  $_POST['denegado'] = $_GET['denegado'];
+  header('location: index.php');
+}
+
+if(isset($_POST['denegado'])){
+  echo "<h1>ACCESO DENEGADO</h1>";
+  echo "<h1>".$_POST['denegado']."</h1>";
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -63,11 +92,11 @@ if(isset($_POST['login'])){
   <div class="rightcolumn">
     <div class="card">
     <?php 
-    if($logeado){
+    if($existeUsuario){
     ?>
-      <h2><?= $usuario ?></h2>
+      <h2><?=  $usuario ?></h2>
       <p>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/User_Circle.png" alt="">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/User_Circle.png" alt="" width="70%">
       </p>
     <?php 
     } else {
@@ -75,8 +104,8 @@ if(isset($_POST['login'])){
       <h2>Login</h2>
       <p>
         <form class="form-login" method="post">
-          <input type="text" name="usu" value="" placeholder="usuario"></br>
-          <input type="password" name="pass" value=""  placeholder="contraseña"></br>
+          <input type="text" name="usu" value="Usuario1" placeholder="usuario"></br>
+          <input type="password" name="pass" value="1234"  placeholder="contraseña"></br>
           <input type="submit" name="login" value="Login">
         </form>
       </p>

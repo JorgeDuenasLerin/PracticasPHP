@@ -1,3 +1,40 @@
+<?php 
+session_start();
+// si no se ha logeado
+if(!isset($_SESSION['log'])){
+  $ip = $_SERVER['REMOTE_ADDR']; 
+  //echo "<h1>$ip</h1>";
+
+  $info = $_SERVER['HTTP_USER_AGENT'];
+  $info = explode("/", $info);
+  $navegador = $info[0];
+  //echo "<h1>$navegador</h1>";
+  
+  $info = $_SERVER['HTTP_USER_AGENT'];
+  $info = explode(";", $info);
+  $os = $info[1];
+  //echo "<h1>$os</h1>";
+
+  // $navegador = get_browser($_SERVER['HTTP_USER_AGENT'], true);
+
+  // token ipinfo 8b58bb3cdfe0bb
+
+  // creando fichero
+  $mitxt = "acceso-denegado.txt";
+  $fh = fopen($mitxt, 'a');
+
+  // escribiendo
+  $fh = fopen($mitxt, 'a') or die("no se puede abrtir el archivo");
+  $stringData = "$ip\n$navegador\n$os\n\n";
+  fwrite($fh, $stringData);
+  fclose($fh);
+  $stringData = str_replace(' ','',$str);
+  $stringData = str_replace('\n',';',$str);
+  //header("location: index.php?denegado=$stringData");
+  header( "refresh:1;url=confirmarCompra.php?denegado=$stringData");
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -35,7 +72,7 @@
   <div class="rightcolumn">
     <div class="card">
       <h2>About Me</h2>
-      <div class="fakeimg" style="height:100px;">Image</div>
+      <div class="fakeimg" style="height:100px;"><img class="todo-espacio" src="https://picsum.photos/200/100" /></div>
       <p>Some text about me in culpa qui officia deserunt mollit anim..</p>
     </div>
     <div class="card">
