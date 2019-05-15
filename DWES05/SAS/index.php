@@ -8,7 +8,10 @@ $listado_productos = $instancia->mostrarProductos();
 // print_r($_POST);
 // echo "</pre>";
 
-
+// echo "<pre>";
+// echo "<B>GET</B><BR>";
+// print_r($_GET);
+// echo "</pre>";
 
 session_start();
 //session_destroy();
@@ -40,87 +43,58 @@ if(isset($_POST['añadir'])){
   // }
 }
 
-// confirmar es una etiqueta a donde la rediciono a la misma pagina con parametros en el get, la guardo en post y la borro redireccionando
-/*
-if(isset($_GET['confirmar'])){
-  echo "<H3>index.php - entro en GET CONFIRMAR</H3>";
-  $_POST['confirmar']=$_GET['confirmar'];
-  header( "refresh:1;url=index.php");
-}
-// si esta confirmar en post y el carrito esta inicializado si que permito llevar a la pagina de confrimarCompra
-if(isset($_POST['confirmar']) && isset($_SESSION['carrito'])){
-  echo "<H3>index.php - entro en POST CONFIRMAR</H3>";
-  header( "refresh:1;url=");
-}*/
-
 // borrar un producto de la lista de la compra
 if(isset($_GET['borrar'])){
-  echo "<H3>index.php - entro en GET BORRAR</H3>";
+  //echo "<H3>index.php - entro en GET BORRAR</H3>";
   unset($_SESSION['carrito'][$_GET['borrar']]); 
-  header( "refresh:1;url=index.php");
+  header("location: index.php");
   die();
 }
-
 
 // restar un producto de la lista de la compra
-if(isset($_GET['restar'])){
-  echo "<H3>index.php - entro en GET RESTAR</H3>";
-
-  $decremento = $_SESSION["carrito"][$_GET["restar"]][2];
+if(isset($_GET["restar"])){
+  //echo "<H3>index.php - entro en GET RESTAR</H3>";
+  $id = $_GET["restar"];
+  // en $decremento guardo el valor actual del producto que me quieren restar
+  $decremento = $_SESSION["carrito"][$id][2];
+  // hago la resta
   $decremento = $decremento-1;
-  $_SESSION["carrito"][$_GET["restar"]][2] = $decremento;
-  if($_SESSION["carrito"][$_GET["restar"]][2] == 0){
-    unset($_SESSION["carrito"][$_GET['restar']]);
+  // le guardo el nuevo valor
+  $_SESSION["carrito"][$id][2] = $decremento;
+  // cuando llegue a 0 se va a borrar esa fruta del array
+  if($_SESSION["carrito"][$id][2] == 0){
+    unset($_SESSION["carrito"][$id]);
   }
-
-  header( "location: index.php");
+  header("location: index.php");
+  // el die es para que no siga y entre en mas condiciones porque tenia un header con un refresh despues de 2 segundos
   die();
 }
 
-/*
-if(isset($_GET['restar'])){
-  echo "<H3>index.php - entro en GET RESTAR</H3>";
-  $_POST['restar']=$_GET['restar'];
-
-  header( "refresh:1;url= index.php");
+if(isset($_GET['sumar'])){
+  $id = $_GET['sumar'];
+  $valor = $_SESSION['carrito'][$id][2];
+  $valor++;
+  $_SESSION['carrito'][$id][2] = $valor;
 }
-
-// si esta restar en post borro el producto
-
-if(isset($_POST['restar']) && isset($_SESSION["carrito"])){
-  echo "<H3>confirmarCompra.php entro en POST RESTAR</H3>";
-  $decremento = $_SESSION["carrito"][$_POST["restar"]][2];
-  $decremento = $decremento-1;
-  $_SESSION["carrito"][$_POST["restar"]][2] = $decremento;
-  if($_SESSION["carrito"][$_POST["restar"]][2] == 0){
-    if($_POST["restar"] == 0){
-      array_shift($_SESSION["carrito"]);
-    } else {
-      array_splice($_SESSION["carrito"], $_POST['restar'], 1);
-    }
-  }
-  //unset($_SESSION['carrito'][$_POST['restar']]);
-  header( "refresh:1;url=confirmarCompra.php");
-}*/
 
 ?>
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Proyecto de frutería</title>
+  <title>frutería</title>
   <link rel="stylesheet" href="css/estilos.css">
   <link rel="stylesheet" href="css/especifico.css">
 </head>
 <body>
 
 <div class="header">
-  <h1>My Website</h1>
+  <h1>Mi Frutería</h1>
   <p>Resize the browser window to see the effect.</p>
 </div>
 
 <div class="topnav">
-  <a href="#">Compra</a>
+  <a href="#"><!-- Compra --></a>
   <!--- <a href="#" style="float:right">Link</a> --->
 </div>
 
@@ -143,7 +117,13 @@ if(isset($_POST['restar']) && isset($_SESSION["carrito"])){
       // echo "</pre>";
       ?>
       <div class="card">
-      <h5><?= $producto['nombre']?> <img class="eco" src="imgs/leaf.png"></h5>
+
+      <?php if($producto['ecologico'] == 1){ ?>
+         <h5><?= $producto['nombre']?> <img class="eco" src="imgs/leaf.png"></h5>
+      <?php } else { ?>
+         <h5><?= $producto['nombre']?></h5>
+      <?php } ?>
+
       <p><?= $producto['descripcion']?></p>
       <p><?= $producto['precio']?> €</p>
       <form class="anade-producto" method="post">
@@ -171,28 +151,13 @@ if(isset($_POST['restar']) && isset($_SESSION["carrito"])){
             ?>
             <a href="index.php?borrar=<?=$clave?>"><img class="eco" style="float:left;" src="https://cdn0.iconfinder.com/data/icons/round-ui-icons/512/close_red.png" alt="eliminar producto"></a>
             <a href="index.php?restar=<?=$clave?>"><img class="eco" style="float:left;" src="https://img.pngio.com/dash-minus-negative-remove-removed-subtract-subtraction-icon-subtraction-png-512_512.png" alt="restar cantidad"></a>
+            <a href="index.php?sumar=<?=$clave?>"><img class="eco" style="float:left;" src="https://cdn1.iconfinder.com/data/icons/interface-elements/32/add-circle-512.png" alt="sumar cantidad"></a>
              <p><?=$valor[0]?> x<?=$valor[2]?><span class="precio-carrito"><?=$valor[1]*$valor[2]?> €</span></p>
             <?php
             $sumaTotal += $valor[1]*$valor[2];
           }
         }
       }
-
-
-      // $precio = 0;
-      // $cantidad = 0;
-      // foreach ($_SESSION['carrito'] as $fila) {
-      //   foreach ($fila as $clave => $valor) {
-      //     //echo "$clave -> $valor <br>";
-      //     if($clave == 1) $precio = $valor;
-      //     if($clave == 2) {
-      //       $cantidad = $valor;
-      //       //echo "precio: $precio";
-      //       //echo "cantidad: $cantidad";
-      //     }
-
-      //   }
-      // }
       ?>
       <!-- <p>Tomates x4<span class="precio-carrito">5€</span></p>
       <p>Tomates x4<span class="precio-carrito">5€</span></p>
