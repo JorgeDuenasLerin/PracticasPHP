@@ -46,11 +46,11 @@ CREATE TABLE IF NOT EXISTS `producto` (
 
 INSERT INTO `producto` (`id`, `nombre`, `descripcion`, `precio`, `ecologico`, `tipo`) VALUES
 
-(1, 'Tomates pare', 'Tomates pera', '1.95', false, 2);
-(2, 'Pimientos verde', 'Pimiento verde', '1.85', false, 2);
-(3, 'Manzana golden', 'Manzana golden', '1.95', false, 1);
-(4, 'Manzana Ecológica', 'Manzana eco', '1.95', true, 1);
-(5, 'Naranjas zumo', 'Naranjas zumo', '1.95', false, 1);
+(1, 'Tomates pare', 'Tomates pera', '1.95', false, 2),
+(2, 'Pimientos verde', 'Pimiento verde', '1.85', false, 2),
+(3, 'Manzana golden', 'Manzana golden', '1.95', false, 1),
+(4, 'Manzana Ecológica', 'Manzana eco', '1.95', true, 1),
+(5, 'Naranjas zumo', 'Naranjas zumo', '1.95', false, 1),
 (6, 'Huevo corral eco', 'Huevo corral eco', '3.95', true, 4);
 
 -- --------------------------------------------------------
