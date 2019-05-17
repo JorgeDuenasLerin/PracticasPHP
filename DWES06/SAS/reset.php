@@ -20,7 +20,7 @@ if(isset($_POST['enviar'])){
             $comprobarToken = $instancia->comprobarToken($token, $id);
             if($comprobarToken){
                 // actualizar contraseña si esta todo bien y redirigir al index.php
-                $actualizarPass = $instancia->cambiarPass(1, "1234");
+                $actualizarPass = $instancia->cambiarPass($id, $password);
                 if($actualizarPass){
                     // borrar token de este usuario
                     $borrarToken = $instancia->borrarToken($token, $id);

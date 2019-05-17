@@ -23,6 +23,10 @@ if(isset($_SESSION)){
   echo "</pre>";
 }
 
+function generateToken($length = 30){
+    return bin2hex(random_bytes($length));
+}
+
 if(isset($_POST['enviar'])){
     if(isset($_POST['usu'])){
         if(!empty($_POST['usu'])){
@@ -35,12 +39,12 @@ if(isset($_POST['enviar'])){
             
             if(!empty($consultaNombre)){
                 // generar token (aleatorio...) del usuario
-                $token = '98a8a61f4583f87bb0361b355db95274ba0de3eec824b81b7932fbb57605';
+                $token = generateToken();
                 $id = $consultaNombre[0]['id'];
                 // insertarlo a la bbdd con su id y enviarselo por correo para el reseteo
                 $tokenInsert = $instancia->insertarToken($token, $id);
-                
-                if(!$tokenInsert){
+                print_r($tokenInsert);
+                if($tokenInsert == 1){
                     // $_POST['token'] = $tokenInsert[0]['token'];
                     // $_POST['id'] = $tokenInsert[0]['id'];
                     header("location: mail.php?forgot=true&token=$token&id=$id");

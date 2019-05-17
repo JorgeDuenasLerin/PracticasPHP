@@ -25,6 +25,10 @@ class conexMetodosBBDD {
     public function __destruct(){
         $this->dbPDO = null; // destruye la conexion 
     }
+    /*NOTAS A TENER EN CUENTA
+    EN GENERAL: IMPORTANTE QUE SEA PREPARE Y NO QUERY
+    CONSULTAS UPDATE: hacer un fetchAll no devolverá nada, con lo cual hay que hacer ->rowCount()
+    */ 
 
     public function consultarNombre(String $nombre){
         $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE nombre = :nombre;");
@@ -71,11 +75,10 @@ class conexMetodosBBDD {
         $rs=$this->dbPDO->prepare("INSERT INTO auth_tokens (token, userid, expires) VALUES (:token, :userid, $expires);");
         $rs->bindParam(':token', $token);
         $rs->bindParam(':userid', $userid);
+        $rs->execute();
         
-        print_r($rs);
-
-        if($rs->execute()){
-           return $resultado = $rs->fetchAll(PDO::FETCH_ASSOC);
+        if($rs){
+           return $resultado = $rs->rowCount();
         } else {
             print_r($this->dbPDO->errorInfo());
         }
@@ -85,7 +88,7 @@ class conexMetodosBBDD {
         $rs = $this->dbPDO->prepare("DELETE FROM auth_tokens WHERE token = :token AND userid = :id ;");
         $rs->bindParam(':token', $token);
         $rs->bindParam(':id', $id);
-
+        
         if(!$rs->execute()){
             print_r($this->dbPDO->errorInfo());
         } else {
@@ -108,17 +111,21 @@ class conexMetodosBBDD {
     }
 
     public function cambiarPass(String $id, String $pass){
-        //$pass = password_hash($pass, PASSWORD_DEFAULT);
-        $rs = $this->dbPDO->prepare("UPDATE usuario SET pass = :pass WHERE id = :id;");
-        $rs->bindParam(':pass', $pass);
-        $rs->bindParam(':id', $id);
-        $rs->execute();
+        // estaria genial hacer una preconsulta comprobando que la contraseña nueva no sea igual que la que ya estaba
+        $pass = password_hash($pass, PASSWORD_DEFAULT);
+        $rs = $this->dbPDO->prepare("UPDATE usuario SET pass = ? WHERE id = ?");
+        $rs->execute([$pass, $id]);
+        echo "$id $pass<br>";
 
         if(!$rs){
             print_r($this->dbPDO->errorInfo());
+            echo "asd";
         } else {   
-            return $rs->fetchAll(PDO::FETCH_ASSOC);
+            echo "dsa<br>";
+            print_r($rs->rowCount());
+            return $rs->rowCount();
         }
+
     }
     
 } // de la clase conexMetodosBBDD
