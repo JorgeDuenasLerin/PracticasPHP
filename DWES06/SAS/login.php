@@ -1,3 +1,56 @@
+<?php 
+include_once('conexMetodosBBDD.php');
+
+DEFINE('webpage', 'login.php');
+$usuario = "";
+
+echo "<pre>";
+print_r($_POST);
+echo "</pre>";
+
+echo "<pre>";
+print_r($_GET);
+echo "</pre>";
+
+if(isset($_SESSION)){
+  echo "<pre>";
+  print_r($_SESSION);
+  echo "</pre>";
+}
+
+if(isset($noExiste)){
+    if($noExiste != true){
+        $noExiste = false;
+    }
+}
+
+if(isset($_POST['enviar'])){
+    if(isset($_POST['usu'])){
+        $usuario = $_POST['usu'];
+        if(isset($_POST['pass'])){
+            $pass = $_POST['pass'];
+            $instancia = new conexMetodosBBDD();
+            $existeUsuario = $instancia->consultarUsuario($usuario, $pass);
+
+            if($existeUsuario){
+                session_start();
+                $_SESSION['logged'] = true;
+                header('location: index.php');
+                $noExiste = false;
+            } else {
+                // echo "<h1>usuario o pass incoorrecta</h1>";
+                $noExiste = true;
+            }
+        }
+    }
+}
+
+if(isset($_SESSION['logged'])){
+    if($_SESSION['logged'] == true){
+        header('location: index.php');
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,20 +65,30 @@
 </head>
 <body>
 <div class="login-form">
-    <form action="/examples/actions/confirmation.php" method="post">
-        <h2 class="text-center">Log in</h2>       
+    <form action="#" method="POST">
+        <h2 class="text-center">Log in</h2>  
+        <?php if(isset($noExiste) && $noExiste == true) {?> 
+        <div class="form-group has-error">
+            <input type="text" name="usu" class="form-control" id="inputError" placeholder="Username" required="required" value="Usuario1">
+        </div>  
+        <div class="form-group has-error">
+            <input type="password" name="pass" class="form-control" id="inputError" placeholder="Password" required="required" value="1234">
+            <span class="help-block">Usuario o contraseña incorrectas</span>
+        </div>      
+        <?php } else { ?>
         <div class="form-group">
-            <input type="text" class="form-control" placeholder="Username" required="required">
+            <input type="text" name="usu" class="form-control" placeholder="Username" required="required" value="Usuario1">
         </div>
         <div class="form-group">
-            <input type="password" class="form-control" placeholder="Password" required="required">
+            <input type="password" name="pass" class="form-control" placeholder="Password" required="required" value="1234">
         </div>
+        <?php } ?>
         <div class="form-group">
-            <button type="submit" class="btn btn-primary btn-block">Log in</button>
+            <button type="submit" name="enviar" class="btn btn-primary btn-block">Log in</button>
         </div>
         <div class="clearfix">
             <label class="pull-left checkbox-inline"><input type="checkbox"> Remember me</label>
-            <a href="#" class="pull-right">Forgot Password?</a>
+            <a href="forgot.php" class="pull-right">Forgot Password?</a>
         </div>        
     </form>
     <!-- <p class="text-center"><a href="#">Create an Account</a></p> -->

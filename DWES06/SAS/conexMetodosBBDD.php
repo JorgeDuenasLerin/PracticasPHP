@@ -26,67 +26,100 @@ class conexMetodosBBDD {
         $this->dbPDO = null; // destruye la conexion 
     }
 
+    public function consultarNombre(String $nombre){
+        $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE nombre = :nombre;");
+        $rs->bindParam(':nombre', $nombre);
+
+        if(!$rs->execute()){
+            print_r($this->dbPDO->errorInfo());
+        } else {
+            $rs->execute();        
+            return $rs->fetchAll(PDO::FETCH_ASSOC);;
+        }
+    }
+
     public function consultarUsuario(String $nombre, String $pass){
         //$sentenciaSQL=$this->dbPDO->query('SELECT * FROM agenda')->fetchAll();
       
         $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE nombre = :nombre");
         $rs->bindParam(':nombre', $nombre);
-        
-        if(!$rs->execute()){
-            //echo "<h1>conexMetodosBBDD.php - NO Funciona la consulta</h1>";
+        $rs->execute();
+
+        if(!$rs){
+            echo "<h1>conexMetodosBBDD.php - NO Funciona la consulta</h1>";
             print_r($this->dbPDO->errorInfo());         
         } else {
             //echo "<h1>conexMetodosBBDD.php - Funciona la consulta</h1>";
-            $rs->execute();
             $resultado = $rs->fetchAll(PDO::FETCH_ASSOC);
-            $passbbdd = $resultado[0]['pass'];
-
-            //echo "<p>$nombre</p><p>$pass</p>";
-
-            if(password_verify($pass, $passbbdd)){
-                //echo "<h1>CONTRASEÑA CORRECTA</h1>";
-                return true;
-                //return $resultado;
-            } else {
-                //echo "<h1>CONTRASEÑA INCORRECTA</h1>";
-                return false;
+            if(!empty($resultado)){
+                $passbbdd = $resultado[0]['pass'];
+                if(password_verify($pass, $passbbdd)){
+                    //echo "<h1>CONTRASEÑA CORRECTA</h1>";
+                    return true;
+                    //return $resultado;
+                } else {
+                    //echo "<h1>CONTRASEÑA INCORRECTA</h1>";
+                    return false;
+                }
+                //echo "<h1>$passbbdd</h1>";
             }
-            echo "<h1>$passbbdd</h1>";
-            die();
+            //echo "<p>$nombre</p><p>$pass</p>";
         }
     }
 
-    public function mostrarProductos(){
-        //$sentenciaSQL=$this->dbPDO->query('SELECT * FROM agenda')->fetchAll();
-        $sentenciaSQL=$this->dbPDO->query('SELECT * FROM fruteria.producto');
+    public function insertarToken($token, $userid, $expires = "now() + INTERVAL 1 DAY"){
+        $rs=$this->dbPDO->prepare("INSERT INTO auth_tokens (token, userid, expires) VALUES (:token, :userid, $expires);");
+        $rs->bindParam(':token', $token);
+        $rs->bindParam(':userid', $userid);
         
-        if($sentenciaSQL){
-           return $resultado = $sentenciaSQL->fetchAll(PDO::FETCH_ASSOC);
+        print_r($rs);
+
+        if($rs->execute()){
+           return $resultado = $rs->fetchAll(PDO::FETCH_ASSOC);
         } else {
             print_r($this->dbPDO->errorInfo());
         }
     }
+    
+    public function borrarToken(String $token, String $id){
+        $rs = $this->dbPDO->prepare("DELETE FROM auth_tokens WHERE token = :token AND userid = :id ;");
+        $rs->bindParam(':token', $token);
+        $rs->bindParam(':id', $id);
 
-    public function actualizarProducto($cod, $nombre, $nombre_corto, $descripcion, $pvp){
-        $rs = $this->dbPDO->prepare("UPDATE producto SET cod = :cod, nombre = :nombre, nombre_corto = :nombre_corto, descripcion = :descripcion, pvp = :pvp WHERE cod = :cod");
-        $rs->bindParam(':cod', $cod);
-        $rs->bindParam(':nombre', $nombre);
-        $rs->bindParam(':nombre_corto', $nombre_corto);
-        $rs->bindParam(':descripcion', $descripcion);
-        $rs->bindParam(':pvp', $pvp);
+        if(!$rs->execute()){
+            print_r($this->dbPDO->errorInfo());
+        } else {
+            $rs->execute();
+            return  $rs->fetchAll(PDO::FETCH_ASSOC);
+        }
+    }
+
+    public function comprobarToken(String $token, String $id){
+        $rs = $this->dbPDO->prepare("SELECT * FROM auth_tokens WHERE token = :token AND userid = :id;");
+        $rs->bindParam(':token', $token);
+        $rs->bindParam(':id', $id);
+
+        if(!$rs->execute()){
+            print_r($this->dbPDO->errorInfo());
+        } else {
+            $rs->execute();
+            return  $rs->fetchAll(PDO::FETCH_ASSOC);
+        }
+    }
+
+    public function cambiarPass(String $id, String $pass){
+        //$pass = password_hash($pass, PASSWORD_DEFAULT);
+        $rs = $this->dbPDO->prepare("UPDATE usuario SET pass = :pass WHERE id = :id;");
+        $rs->bindParam(':pass', $pass);
+        $rs->bindParam(':id', $id);
         $rs->execute();
+
         if(!$rs){
             print_r($this->dbPDO->errorInfo());
-            throw new Exception("Error en la query");
-            echo "<h2>no funciona la consulta</h2>";
-        } else {
-            echo "<h2>funcion la consulta</h2>";
-            print_r($rs);
-            return $rs;
+        } else {   
+            return $rs->fetchAll(PDO::FETCH_ASSOC);
         }
     }
-
-   
     
 } // de la clase conexMetodosBBDD
 ?>  

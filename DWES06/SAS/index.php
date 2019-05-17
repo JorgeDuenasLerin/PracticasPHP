@@ -1,9 +1,15 @@
 <?php 
 include_once('conexMetodosBBDD.php');
 
+session_start();
+
 DEFINE('webpage', 'index.php');
 $usuario  = "";
-
+if(isset($_SESSION['logged'])){
+  if($_SESSION['logged'] != true){
+    $_SESSION['logged'] = false;
+  }
+}
 
 echo "<pre>";
 print_r($_POST);
@@ -22,18 +28,19 @@ if(isset($_SESSION)){
 if(isset($_POST['login'])){
   
   if(!empty($_POST['usu'])){
+
     $usuario = $_POST['usu'];
+
     if(!empty($_POST['pass']) && $_POST['pass'] != ""){
       
       $instancia = new conexMetodosBBDD();
       $nombre = $_POST['usu'];
       $pass = $_POST['pass'];
-      // $pass = password_hash($pass, PASSWORD_DEFAULT);
+      // consulta a la bbdd con la pass sin el has
       $existeUsuario = $instancia->consultarUsuario($nombre, $pass);
 
       if($existeUsuario){
         //echo "<h1>usuario logeado</h1>";
-        session_start();
         $_SESSION['logged'] = true;
       } else {
         // echo "<h1>usuario o pass incoorrecta</h1>";
@@ -45,29 +52,15 @@ if(isset($_POST['login'])){
 }
 
 if(isset($_GET['denegado'])){
-  $_POST['denegado'] = $_GET['denegado'];
-  header('location: index.php');
-}
-
-if(isset($_POST['denegado'])){
   echo "<h1>ACCESO DENEGADO</h1>";
   echo "<h1>".$_POST['denegado']."</h1>";
 }
 
-
 if(isset($_GET['logout'])){
-  $_POST['logout'] = $_GET['logout'];
-  header("Location: ". webpage);
-  // LAS CONSTANTES VAN SIN EL $ DELANTE
-  die();
-}
-
-if(isset($_POST['logout'])){
-  // echo "<h1>ACCESO POST logout</h1>";
   //unset($_SESSION['log']);
   $_SESSION['logged']=false;
+  header('location: '.webpage);
 }
-
 
 ?>
 
@@ -92,16 +85,18 @@ if(isset($_POST['logout'])){
   <a href="info3.php">Info3</a>
   <a href="info4.php">Info4</a>
   <a href="info5.php">Info5</a>
-  <?php if($_SESSION['logged'] == true){ ?>
-    <a href="<?=$webpage?>?logout" style="float:right">Log out</a>
+  <?php
+  if(isset($_SESSION['logged'])){
+    if($_SESSION['logged'] == true){ ?>
+    <a href="<?=webpage?>?logout" style="float:right">Log out</a>
   <?php } else { ?>
     <a href="login.php" style="float:right">Sign in</a>
-  <?php } ?>
+  <?php } } ?>
 </div>
 
 <div class="row">
   <div class="leftcolumn">
-  <?php if($_SESSION['logged'] == true){?>
+  <?php if($_SESSION['logged'] == true){ ?>
     <div class="card">
       <h2>Bienvenido <?= $usuario?></h2>
       <h5>Title description, Dec 7, 2017</h5>
@@ -118,16 +113,15 @@ if(isset($_POST['logout'])){
   </div>
   <div class="rightcolumn">
     <div class="card">
-    <?php if($_SESSION['logged'] == true){
-    ?>
+    <?php if($_SESSION['logged'] == true){ ?>
       <h2><?=  $usuario ?></h2>
       <p>
         <img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/User_Circle.png" alt="" width="70%">
-        <a href="<?=$webpage?>?logout="><img src="https://cdn1.iconfinder.com/data/icons/interface-elements-ii-1/512/Logout-512.png" alt="" width="70%"></a>
+        <a href="<?=webpage?>?logout="><img src="https://cdn1.iconfinder.com/data/icons/interface-elements-ii-1/512/Logout-512.png" alt="" width="70%"></a>
         
       </p>
     <?php 
-    } else {
+     } else {
     ?>
       <h2>Login</h2>
       <p>
