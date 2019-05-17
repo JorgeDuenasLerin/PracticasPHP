@@ -11,6 +11,11 @@ form.anade-producto input.cantidad{
 
 span.precio-carrito {
   float:right;
+  margin-right: 35px;
+}
+
+span.precio-carrito2 {
+  margin-left: 178px;
 }
 
 p.separador {
@@ -37,3 +42,21 @@ p.separador {
 .button-black {background-color: #555555;} /* Black */
 
 .button-100 {width: 100%;}
+
+.menos{
+  color:red;
+  font-weight: bolder;
+  text-decoration: none;
+  font-size: 0.9em;
+  position: relative;
+  left:18px ;
+}
+
+.x{
+  color:red;
+  font-weight: bolder;
+  text-decoration: none;
+  font-size: 0.9em;
+  position: relative;
+  left: 35px;
+}

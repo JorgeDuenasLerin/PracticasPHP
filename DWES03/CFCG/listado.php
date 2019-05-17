@@ -14,6 +14,8 @@
 		}
 	}
 
+	$opcion = ['Cámaras digitales', 'Consolas', 'Libros electrónicos', 'Impresoras', 'Memorias flash', 'Reproductores MP3', 'Equipos multifunción', 'Netbooks', 'Ordenadores', 'Ordenadores portátiles', 'Routers', 'Sistemas de alimentación ininterrumpida', 'Software', 'Televisores', 'Videocámaras'];
+
 ?>
 
 <!DOCTYPE html>
@@ -31,21 +33,9 @@
 		<form id="form_seleccion" action="<?php echo $_SERVER['PHP_SELF'];?>" method="post">
 			<label><b>Familia: </b></label>
 			<select name="familia" form="form_seleccion">
-				<option value="Cámaras digitales">Cámaras digitales</option>
-				<option value="Consolas">Consolas</option>
-				<option value="Libros electrónicos">Libros electrónicos</option>
-				<option value="Impresoras">Impresoras</option>
-				<option value="Memorias flash">Memorias flash</option>
-				<option value="Reproductores MP3">Reproductores MP3</option>
-				<option value="Equipos multifunción">Equipos multifunción</option>
-				<option value="Netbooks">Netbooks</option>
-				<option value="Ordenadores">Ordenadores</option>
-				<option value="Ordenadores portátiles">Ordenadores portátiles</option>
-				<option value="Routers">Routers</option>
-				<option value="SAI">Sistemas de alimentación ininterrumpida</option>
-				<option value="Software">Software</option>
-				<option value="Televisores">Televisores</option>
-				<option value="Videocámaras">Videocámaras</option>
+				<?php foreach ($opcion as $value) { ?>
+				<option value="<?=$value?>"><?=$value?></option>
+				<?php } ?>
 			</select>
 			<input type="submit" name="mostrar" value="Mostrar Productos">
 		</form>

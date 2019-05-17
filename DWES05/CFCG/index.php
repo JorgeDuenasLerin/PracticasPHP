@@ -1,3 +1,39 @@
+<?php 
+    session_start();
+
+    require_once('src/DataBaseConnection.php');
+
+    $conexion = new DataBaseConnection();
+
+    $arrayProducto = $conexion->mostrarProducto(); 
+
+    if(!isset($_SESSION["carrito"])){
+        $_SESSION["carrito"] = [];
+    }
+
+    if(isset($_POST['añadir'])){
+      if(isset($_POST['id'])){
+        $id = $conexion->cleanInput($_POST['id']);
+
+          if(array_key_exists($id, $_SESSION['carrito'])){
+
+            $_SESSION["carrito"][$id]['cantidad'] += $_POST['cantidad'];
+
+          }else{
+            $nuevoElemento = [];
+            $nuevoElemento['nombre'] = $conexion->cleanInput($_POST['nombre']);
+            $nuevoElemento['precio'] = $conexion->cleanInput($_POST['precio']);
+            $nuevoElemento['cantidad'] = $conexion->cleanInput($_POST['cantidad']);
+
+            $_SESSION["carrito"][$id] = $nuevoElemento;
+          }
+        }
+      }//if(isset($_POST['añadir']))
+
+      if(isset($_GET['menos'])){
+        
+      }
+  ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,16 +60,26 @@
 
 <div class="row">
   <div class="leftcolumn">
-    <div class="card">
+    <?php foreach ($arrayProducto as $value) { 
+      $tipo = $value['tipo'];
+      $resul = $conexion->mostrarTipo($tipo);
+      $nombreTipo = $resul[0]['nombre'];
+      ?>
 
-      <h5>Tomates (Verduras)<img class="eco" src="imgs/leaf.png"></h5>
-      <p>Producto de primera calidad traido de ...</p>
-      <p>1.95 €</p>
-      <form class="anade-producto">
+    <div class="card">
+      <h5><?=$value['nombre']?>(<?=$nombreTipo?>)<img class="eco" src="imgs/leaf.png"></h5>
+      <p><?=$value['descripcion']?></p>
+      <p><?=$value['precio']?> €</p>
+      <form class="anade-producto" method="post">
+        <input type="hidden" name="id" value="<?=$value['id'] ?>">
+        <input type="hidden" name="nombre" value="<?=$value['nombre']?>">
+        <input type="hidden" name="precio" value="<?=$value['precio'] ?>">
         <input class="cantidad" type="number" name="cantidad" value="1">
         <input type="submit" name="añadir" value="Añadir">
       </form>
     </div>
+    <?php  }?>
+
     <!---
     <div class="card">
       <h2>TITLE HEADING</h2>
@@ -54,13 +100,21 @@
   <div class="rightcolumn">
     <div class="card">
       <h2>Tu compra</h2>
-      <p>Tomates x4<span class="precio-carrito">5€</span></p>
-      <p>Tomates x4<span class="precio-carrito">5€</span></p>
-      <p>Tomates x4<span class="precio-carrito">5€</span></p>
-      <p>Tomates x4<span class="precio-carrito">5€</span></p>
-      <p>Tomates x4<span class="precio-carrito">5€</span></p>
+      <?php if(array_key_exists($id, $_SESSION['carrito'])) { 
+              foreach ($_SESSION as $producto) {
+                foreach ($producto as $key => $value) { ?>
+
+                 <p><?=$value['nombre']?> x <?=$value['cantidad']?><span class="precio-carrito"><?=$value['precio'] * $value['cantidad']?>€ <a href="index.php?menos=<?=$key?>" class="menos">&#8722;</a><a href="index.php?eliminar=<?=$key?>" class="x">X</a></span></p>
+
+      <?php     $costo = $value['precio']* $value['cantidad'];
+                $costoTotal += $costo;
+                }
+              }
+            } elseif(!array_key_exists($id, $_SESSION['carrito'])){ ?>
+                  <p>0 x 0<span class="precio-carrito"> 0 € <a href="index.php?menos=<?=$key?>" class="menos">&#8722;</a><a href="index.php?eliminar=<?=$key?>" class="x">X</a></span></p>
+            <?php } ?>
       <p class="separador">&nbsp;</p>
-      <p>Total<span class="precio-carrito">5€</span></p>
+      <p>Total<span class="precio-carrito2"><?=$costoTotal?> €</span></p>
       <p>&nbsp;</p>
       <a class="button button-100" href="">Confirmar compra</a>
     </div>
