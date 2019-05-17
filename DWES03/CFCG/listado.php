@@ -27,7 +27,6 @@
 </head>
 
 <body>
-
 	<div id="encabezado">
 		<h1>Listado de productos de una familia: </h1>
 		<form id="form_seleccion" action="<?php echo $_SERVER['PHP_SELF'];?>" method="post">

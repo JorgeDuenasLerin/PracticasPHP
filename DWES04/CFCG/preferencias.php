@@ -6,8 +6,6 @@ $idioma="Español";
 $perfil="si";
 $hora="GMT-2";
 
-
-
 if(isset($_POST['enviar'])){/*ENVIAN UN POST*/
 	$_SESSION['idioma'] = $_POST['idioma'];
 	$_SESSION['perfil'] = $_POST['perfil'];
