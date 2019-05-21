@@ -39,8 +39,8 @@ if(isset($_POST['login'])){
       // consulta a la bbdd con la pass sin el has
       $existeUsuario = $instancia->consultarUsuario($nombre, $pass);
 
-      if($existeUsuario){
-        //echo "<h1>usuario logeado</h1>";
+      if(!empty($existeUsuario)){
+        // echo "<h1>usuario logeado</h1>";
         $_SESSION['logged'] = true;
       } else {
         // echo "<h1>usuario o pass incoorrecta</h1>";
@@ -57,9 +57,28 @@ if(isset($_GET['denegado'])){
 }
 
 if(isset($_GET['logout'])){
-  //unset($_SESSION['log']);
-  $_SESSION['logged']=false;
+  unset($_SESSION['logged']);
+  //$_SESSION['logged']=false;
   header('location: '.webpage);
+}
+
+if(isset($_COOKIE)){
+  if(isset($_COOKIE['remember_me'])){
+    $token = $_COOKIE['remember_me'];
+    $instancia = new conexMetodosBBDD();
+    $consultarToken = $instancia->consultarToken($token);
+    if(!$consultarToken){
+      unset($_COOKIE['remember_me']);
+    } else {
+      $id = $consultarToken[0]['id'];
+      $consultaUsuario = $instancia->consultarUsuarioPorId($id);
+      echo "<pre>";
+      print_r($consultaUsuario);
+      echo "</pre>";
+      
+      $usuario = $consultaUsuario[0]['nombre'];
+    }
+  }
 }
 
 ?>
@@ -86,17 +105,17 @@ if(isset($_GET['logout'])){
   <a href="info4.php">Info4</a>
   <a href="info5.php">Info5</a>
   <?php
-  if(isset($_SESSION['logged'])){
-    if($_SESSION['logged'] == true){ ?>
+  if(isset($_SESSION['logged'])){ ?>
     <a href="<?=webpage?>?logout" style="float:right">Log out</a>
   <?php } else { ?>
     <a href="login.php" style="float:right">Sign in</a>
-  <?php } } ?>
+  <?php } ?>
 </div>
 
 <div class="row">
   <div class="leftcolumn">
-  <?php if($_SESSION['logged'] == true){ ?>
+  <?php  
+    if(isset($_SESSION['logged'])){  ?>
     <div class="card">
       <h2>Bienvenido <?= $usuario?></h2>
       <h5>Title description, Dec 7, 2017</h5>
@@ -113,7 +132,8 @@ if(isset($_GET['logout'])){
   </div>
   <div class="rightcolumn">
     <div class="card">
-    <?php if($_SESSION['logged'] == true){ ?>
+    <?php 
+    if(isset($_SESSION['logged'])){ ?>
       <h2><?=  $usuario ?></h2>
       <p>
         <img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/User_Circle.png" alt="" width="70%">
@@ -121,7 +141,7 @@ if(isset($_GET['logout'])){
         
       </p>
     <?php 
-     } else {
+    } else { 
     ?>
       <h2>Login</h2>
       <p>
@@ -131,7 +151,9 @@ if(isset($_GET['logout'])){
           <input type="submit" name="login" value="Login">
         </form>
       </p>
-    <?php } ?>
+    <?php 
+    }
+    ?>
 
     </div>
   </div>

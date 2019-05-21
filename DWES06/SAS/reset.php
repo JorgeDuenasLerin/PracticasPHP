@@ -24,9 +24,11 @@ if(isset($_POST['enviar'])){
                 if($actualizarPass){
                     // borrar token de este usuario
                     $borrarToken = $instancia->borrarToken($token, $id);
-                    if(!$borrarToken){
+                    if($borrarToken){
+                        echo '<div class="alert alert-success" role="alert">Contraseña cambiada exitosamente!</div>';
+                        header("refresh:4;url=login.php");
+                    } else {
                         echo '<div class="alert alert-danger" role="alert">No pude borrar el token, redirigiendo!</div>';
-                        // header("refresh:4;url=forgot.php");
                     }
                 } else {
                     echo '<div class="alert alert-danger" role="alert">No se actualizó la contraseña, redirigiendo!</div>';

@@ -18,6 +18,12 @@ if(isset($_SESSION)){
   echo "</pre>";
 }
 
+function generateToken($length = 30){
+    return bin2hex(random_bytes($length));
+}
+
+
+
 if(isset($noExiste)){
     if($noExiste != true){
         $noExiste = false;
@@ -31,12 +37,20 @@ if(isset($_POST['enviar'])){
             $pass = $_POST['pass'];
             $instancia = new conexMetodosBBDD();
             $existeUsuario = $instancia->consultarUsuario($usuario, $pass);
-
+    
             if($existeUsuario){
                 session_start();
                 $_SESSION['logged'] = true;
-                header('location: index.php');
+                if(isset($_POST['remember'])){
+                    $instancia = new ConexMetodosBBDD();
+                    $token = generateToken();
+                    $tokenRemember = $instancia->insertarToken($token, $existeUsuario[0]['id']);
+                    //setcookie("your_cookie_name", $session, time()+60*60*24*100,'/');
+                    setcookie("remember_me", $token, time()+60*60*24*100);
+                    print_r($tokenRemember);
+                }
                 $noExiste = false;
+                //header('location: index.php');
             } else {
                 // echo "<h1>usuario o pass incoorrecta</h1>";
                 $noExiste = true;
@@ -87,7 +101,7 @@ if(isset($_SESSION['logged'])){
             <button type="submit" name="enviar" class="btn btn-primary btn-block">Log in</button>
         </div>
         <div class="clearfix">
-            <label class="pull-left checkbox-inline"><input type="checkbox"> Remember me</label>
+            <label class="pull-left checkbox-inline"><input type="checkbox" name="remember"> Remember me</label>
             <a href="forgot.php" class="pull-right">Forgot Password?</a>
         </div>        
     </form>
