@@ -41,6 +41,9 @@ if(isset($_POST['enviar'])){
             if($existeUsuario){
                 session_start();
                 $_SESSION['logged'] = true;
+                $_SESSION['logged_user'] = $nombre;
+                $_SESSION['logged_id'] = $existeUsuario[0]['id'];
+
                 if(isset($_POST['remember'])){
                     $instancia = new ConexMetodosBBDD();
                     $token = generateToken();
@@ -49,6 +52,7 @@ if(isset($_POST['enviar'])){
                     setcookie("remember_me", $token, time()+60*60*24*100);
                     print_r($tokenRemember);
                 }
+                
                 $noExiste = false;
                 //header('location: index.php');
             } else {
@@ -71,11 +75,16 @@ if(isset($_SESSION['logged'])){
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- GOOGLE  -->
+<meta name="google-signin-scope" content="profile email">
+<meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
 <title>Bootstrap Simple Login Form</title>
 <link rel="stylesheet" href="css/login.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+<!-- GOOGLE -->
+<script src="https://apis.google.com/js/platform.js" async defer></script>
 </head>
 <body>
 <div class="login-form">
@@ -99,6 +108,25 @@ if(isset($_SESSION['logged'])){
         <?php } ?>
         <div class="form-group">
             <button type="submit" name="enviar" class="btn btn-primary btn-block">Log in</button>
+        </div>
+        <div id="botongoogle">
+        <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
+        <script>
+        function onSignIn(googleUser) {
+            // Useful data for your client-side scripts:
+            var profile = googleUser.getBasicProfile();
+            console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+            console.log('Full Name: ' + profile.getName());
+            console.log('Given Name: ' + profile.getGivenName());
+            console.log('Family Name: ' + profile.getFamilyName());
+            console.log("Image URL: " + profile.getImageUrl());
+            console.log("Email: " + profile.getEmail());
+
+            // The ID token you need to pass to your backend:
+            var id_token = googleUser.getAuthResponse().id_token;
+            console.log("ID Token: " + id_token);
+        }
+        </script>
         </div>
         <div class="clearfix">
             <label class="pull-left checkbox-inline"><input type="checkbox" name="remember"> Remember me</label>
