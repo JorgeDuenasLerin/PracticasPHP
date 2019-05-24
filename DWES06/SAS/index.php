@@ -3,27 +3,30 @@ include_once('conexMetodosBBDD.php');
 
 session_start();
 
+// variables declaradas (importantes
 DEFINE('webpage', 'index.php');
 $usuario  = "";
-if(isset($_SESSION['logged'])){
-  if($_SESSION['logged'] != true){
-    $_SESSION['logged'] = false;
-  }
-}
 
-echo "<pre>";
-print_r($_POST);
-echo "</pre>";
+// variables para visualizar en produccion
+// echo "<pre>";
+// print_r($_POST);
+// echo "</pre>";
 
-echo "<pre>";
-print_r($_GET);
-echo "</pre>";
+// echo "<pre>";
+// print_r($_GET);
+// echo "</pre>";
 
-if(isset($_SESSION)){
-  echo "<pre>";
-  print_r($_SESSION);
-  echo "</pre>";
-}
+// if(isset($_SESSION)){
+//   echo "<pre>";
+//   print_r($_SESSION);
+//   echo "</pre>";
+// }
+
+// if(isset($_SESSION['logged'])){
+//   if($_SESSION['logged'] != true){
+//     $_SESSION['logged'] = false;
+//   }
+// }
 
 if(isset($_POST['login'])){
   
@@ -57,7 +60,8 @@ if(isset($_POST['login'])){
 
 if(isset($_GET['denegado'])){
   echo "<h1>ACCESO DENEGADO</h1>";
-  echo "<h1>".$_POST['denegado']."</h1>";
+  header("refresh:3;url=index.php");
+  die();
 }
 
 if(isset($_GET['logout'])){
@@ -79,7 +83,9 @@ if(isset($_GET['logout'])){
   die();
 }
 
-// comprobar cuando no este logeado
+// habrá que comprobar cuando esté logeado ¿?
+
+// comprobacion cuando no este logeado
 if(!isset($_SESSION['logged'])){
   if(isset($_COOKIE)){
     if(isset($_COOKIE['remember_me'])){

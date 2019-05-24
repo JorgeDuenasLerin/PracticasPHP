@@ -1,7 +1,14 @@
 <?php 
+include_once('conexMetodosBBDD.php');
+
 session_start();
+
+// variables declaradas (importantes
+DEFINE('webpage', 'index.php');
+$usuario  = "";
+
 // si no se ha logeado
-if(!isset($_SESSION['log'])){
+if(!isset($_SESSION['logged'])){
   $ip = $_SERVER['REMOTE_ADDR']; 
   //echo "<h1>$ip</h1>";
 
@@ -31,8 +38,60 @@ if(!isset($_SESSION['log'])){
   $stringData = str_replace(' ','',$str);
   $stringData = str_replace('\n',';',$str);
   //header("location: index.php?denegado=$stringData");
-  header( "refresh:1;url=confirmarCompra.php?denegado=$stringData");
+  header( "refresh:1;url=index.php?denegado=$stringData");
 }
+
+if(isset($_GET['logout'])){
+  unset($_SESSION['logged']);
+  //$_SESSION['logged']=false;
+
+  $_SESSION['logged_user'] = "";
+
+  $conexion = new conexMetodosBBDD();
+  if(isset($_COOKIE['remember_me'])){
+    $borrarToken = $conexion->borrarToken($_COOKIE['remember_me'], $_SESSION['logged_id']);
+  }
+  $_SESSION['logged_id'] = "";
+
+  unset($_COOKIE['remember_me']);
+  setcookie('remember_me', "", +0);
+  
+  header('location: '.webpage);
+  die();
+}
+
+// comprobacion cuando no este logeado
+if(!isset($_SESSION['logged'])){
+  if(isset($_COOKIE)){
+    if(isset($_COOKIE['remember_me'])){
+      $token = $_COOKIE['remember_me'];
+      $instancia = new conexMetodosBBDD();
+      $consultarToken = $instancia->consultarToken($token);
+      if(!$consultarToken){
+        // habrá que borrar la sesion tambien ¿?
+        unset($_COOKIE['remember_me']);
+        setcookie('remember_me', "", +0);
+      } else {
+        echo "<pre>";
+        print_r($consultarToken);
+        echo "</pre>";
+        $id = $consultarToken[0]['userid'];
+        $consultaUsuario = $instancia->consultarUsuarioPorId($id);
+        echo "<pre>";
+        print_r($consultaUsuario);
+        echo "</pre>";
+
+        $usuario = $consultaUsuario[0]['nombre'];
+        $_SESSION['logged'] = true;
+        $_SESSION['logged_user'] = $usuario;
+        setcookie("remember_me", $token, time()+60*60*24*100);
+        // update de alargar el campo de expiracion de el token en concreto
+      }
+    }
+  }
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -56,11 +115,18 @@ if(!isset($_SESSION['log'])){
   <a href="info3.php">Info3</a>
   <a href="info4.php">Info4</a>
   <a href="info5.php">Info5</a>
-  <a href="#" style="float:right">Link</a>
+  <?php
+  if(isset($_SESSION['logged'])){ ?>
+    <a href="<?=webpage?>?logout" style="float:right">Log out</a>
+  <?php } else { ?>
+    <a href="login.php" style="float:right">Sign in</a>
+  <?php } ?>
 </div>
 
 <div class="row">
   <div class="leftcolumn">
+  <?php  
+    if(isset($_SESSION['logged'])){  ?>
     <div class="card">
       <h2>Bienvenido</h2>
       <h3>Contenido1</h3>
@@ -68,17 +134,29 @@ if(!isset($_SESSION['log'])){
 
       <img class="todo-espacio" src="https://picsum.photos/1200/600" />
     </div>
+  <?php } else { ?>
+    <div class="card">
+      <h2>NO ERES Bienvenido</h2>
+      <h5>Title description, Dec 7, 2017</h5>
+      <p>Debes iniciar sesión para ver el contenido</p>
+      <img class="todo-espacio" src="https://picsum.photos/1200/200" />
+    </div>
+  <?php } ?>
+    
   </div>
   <div class="rightcolumn">
     <div class="card">
-      <h2>About Me</h2>
-      <div class="fakeimg" style="height:100px;"><img class="todo-espacio" src="https://picsum.photos/200/100" /></div>
-      <p>Some text about me in culpa qui officia deserunt mollit anim..</p>
-    </div>
-    <div class="card">
-      <h3>Follow Me</h3>
-      <p>Some text..</p>
-    </div>
+    <?php 
+    if(isset($_SESSION['logged'])){ ?>
+      <h2><?=  $usuario ?></h2>
+      <p>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/User_Circle.png" alt="" width="70%">
+        <a href="<?=webpage?>?logout="><img src="https://cdn1.iconfinder.com/data/icons/interface-elements-ii-1/512/Logout-512.png" alt="" width="70%"></a>
+        
+      </p>
+    <?php 
+    } 
+    ?>
   </div>
 </div>
 
