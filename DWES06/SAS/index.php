@@ -27,7 +27,7 @@ $usuario  = "";
 //     $_SESSION['logged'] = false;
 //   }
 // }
-
+// include_once('autentificacion.php');
 if(isset($_POST['login'])){
   
   if(!empty($_POST['usu'])){
@@ -35,15 +35,15 @@ if(isset($_POST['login'])){
     $usuario = $_POST['usu'];
 
     if(!empty($_POST['pass']) && $_POST['pass'] != ""){
-      
-      $instancia = new conexMetodosBBDD();
+      $logear = new autentificacion();
+      $conexionBBDD = new conexMetodosBBDD();
       $nombre = $_POST['usu'];
       $pass = $_POST['pass'];
       // consulta a la bbdd con la pass sin el has
-      $existeUsuario = $instancia->consultarUsuario($nombre, $pass);
-      echo "<pre>";
-      print_r($existeUsuario);
-      echo "</pre>";
+      $existeUsuario = $conexionBBDD->consultarUsuario($nombre, $pass);
+      // echo "<pre>";
+      // print_r($existeUsuario);
+      // echo "</pre>";
       if(!empty($existeUsuario)){
         // echo "<h1>usuario logeado</h1>";
         $_SESSION['logged'] = true;
@@ -85,6 +85,7 @@ if(isset($_GET['logout'])){
 
 // habrá que comprobar cuando esté logeado ¿?
 
+
 // comprobacion cuando no este logeado
 if(!isset($_SESSION['logged'])){
   if(isset($_COOKIE)){
@@ -108,6 +109,7 @@ if(!isset($_SESSION['logged'])){
         $usuario = $consultaUsuario[0]['nombre'];
         $_SESSION['logged'] = true;
         $_SESSION['logged_user'] = $usuario;
+        $_SESSION['logged_id'] = $existeUsuario[0]['id'];
         setcookie("remember_me", $token, time()+60*60*24*100);
         // update de alargar el campo de expiracion de el token en concreto
       }
