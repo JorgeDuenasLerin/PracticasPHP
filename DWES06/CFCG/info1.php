@@ -26,21 +26,21 @@
   <div class="leftcolumn">
     <div class="card">
       <h2>Bienvenido</h2>
+      <h3>Contenido1</h3>
       <h5>Title description, Dec 7, 2017</h5>
-      <p>Debes iniciar sesión para ver el contenido</p>
-      <img class="todo-espacio" src="https://picsum.photos/1200/200" />
+
+      <img class="todo-espacio" src="https://picsum.photos/1200/600" />
     </div>
   </div>
   <div class="rightcolumn">
     <div class="card">
-      <h2>Login</h2>
-      <p>
-        <form class="form-login" action="" method="post">
-          <input type="text" name="" value="" placeholder="usuario"></br>
-          <input type="password" name="" value=""  placeholder="contraseña"></br>
-          <button type="button" name="button" value="">Login</button>
-        </form>
-      </p>
+      <h2>About Me</h2>
+      <div class="fakeimg" style="height:100px;">Image</div>
+      <p>Some text about me in culpa qui officia deserunt mollit anim..</p>
+    </div>
+    <div class="card">
+      <h3>Follow Me</h3>
+      <p>Some text..</p>
     </div>
   </div>
 </div>
