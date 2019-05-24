@@ -1,6 +1,8 @@
 <?php 
     session_start();
 
+    
+
     require_once('src/DataBaseConnection.php');
 
     $conexion = new DataBaseConnection();
@@ -30,9 +32,32 @@
         }
       }//if(isset($_POST['añadir']))
 
+     
+     /*
+        Disminuir los elementos del carrito de la compra
+     */
       if(isset($_GET['menos'])){
+        $id = $conexion->cleanInput($_GET['menos']);
         
+        $_SESSION['carrito'][$id]['cantidad']--;
+
+        if($_SESSION['carrito'][$id]['cantidad']=== 0){
+          unset($_SESSION['carrito'][$id]);
+        }
+
+        header("location:index.php");
       }
+
+      /*
+       Eliminar el producto del carrito de la compra
+      */
+      if(isset($_GET['eliminar'])){
+        $idElimin = $conexion->cleanInput($_GET['eliminar']);
+        unset($_SESSION["carrito"][$idElimin]);
+
+        header("location:index.php");
+      }
+
   ?>
 <!DOCTYPE html>
 <html>
@@ -100,23 +125,21 @@
   <div class="rightcolumn">
     <div class="card">
       <h2>Tu compra</h2>
-      <?php if(array_key_exists($id, $_SESSION['carrito'])) { 
+      <?php if(isset($_SESSION)) { 
               foreach ($_SESSION as $producto) {
                 foreach ($producto as $key => $value) { ?>
 
-                 <p><?=$value['nombre']?> x <?=$value['cantidad']?><span class="precio-carrito"><?=$value['precio'] * $value['cantidad']?>€ <a href="index.php?menos=<?=$key?>" class="menos">&#8722;</a><a href="index.php?eliminar=<?=$key?>" class="x">X</a></span></p>
+                 <p><?=$value['nombre']?> x <?=$value['cantidad']?><span class="precio-carrito"><?=$value['precio'] * $value['cantidad']?>€ <a href="index.php?menos=<?=$key?>" class="menos">&#8722;</a><a href="index.php?eliminar=<?=$key?>" class="x" alt="eliminar">X</a></span></p>
 
       <?php     $costo = $value['precio']* $value['cantidad'];
                 $costoTotal += $costo;
                 }
               }
-            } elseif(!array_key_exists($id, $_SESSION['carrito'])){ ?>
-                  <p>0 x 0<span class="precio-carrito"> 0 € <a href="index.php?menos=<?=$key?>" class="menos">&#8722;</a><a href="index.php?eliminar=<?=$key?>" class="x">X</a></span></p>
-            <?php } ?>
+            } ?>
       <p class="separador">&nbsp;</p>
       <p>Total<span class="precio-carrito2"><?=$costoTotal?> €</span></p>
       <p>&nbsp;</p>
-      <a class="button button-100" href="">Confirmar compra</a>
+      <a class="button button-100" href="confirmarCompra.php">Confirmar compra</a>
     </div>
     <!---
     <div class="card">

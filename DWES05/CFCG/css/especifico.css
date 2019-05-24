@@ -60,3 +60,12 @@ p.separador {
   position: relative;
   left: 35px;
 }
+
+.sumar{
+  color:red;
+  font-weight: bolder;
+  text-decoration: none;
+  font-size: 0.9em;
+  position: relative;
+  left: 27px;
+}
