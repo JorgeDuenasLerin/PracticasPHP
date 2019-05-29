@@ -9,3 +9,15 @@
 .todo-espacio {
   width: 100%;
 }
+
+.card2{
+	background-color: white;
+	padding: 20px;
+	margin-top: 20px;
+	display: grid;
+  	justify-content: center;
+}
+
+
+
+  

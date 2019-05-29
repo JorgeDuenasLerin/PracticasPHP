@@ -1,3 +1,10 @@
+<?php 
+    session_start();
+    if(!isset($_SESSION['logued'])){
+      header('location:index2.php?error=error');
+      die();
+    }
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

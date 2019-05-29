@@ -70,6 +70,106 @@
 		
 		}//cleanInput()
 
+		public function getIP(){
+			if(isset($_SERVER['HTTP_CLIENT_IP'])){
+				return $_SERVER['HTTP_CLIENT_IP'];
+			
+			}elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+				return $_SERVER['HTTP_X_FORWARDED_FOR'];
+			
+			}elseif(isset($_SERVER['HTTP_X_FORWARDED'])){
+				return $_SERVER['HTTP_X_FORWARDED'];
+
+			}elseif(isset($_SERVER['HTTP_FORWARDED_FOR'])){
+				return $_SERVER['HTTP_FORWARDED_FOR'];
+
+			}elseif(isset($_SERVER['HTTP_FORWARDED'])){
+				return $_SERVER['HTTP_FORWARDED'];
+
+			}else{
+				return $_SERVER['REMOTE_ADDR'];
+			}
+		}//getIP()
+
+		public function ipPais($direccionIP = '74.125.224.72'){
+			
+			//API que nos devuelve un JSON con datos relacionados a la ip solicitada
+			$informacionSolicitud = file_get_contents("http://www.geoplugin.net/json.gp?ip=".$direccionIP);
+
+			//Convertimos el JSON en un array
+			$dataArray = json_decode($informacionSolicitud);
+
+			//Extraemos del array el pais de la IP.
+			foreach ($dataArray as $key => $value) {
+				if($key == "geoplugin_countryName"){
+					$pais = $value;
+				}
+			}
+			return $pais;
+		}//ipPais
+
+		public function detectarSO($userAgent){
+
+			$so ="";
+
+			$arraySO = ["MS Windows", "GNU/Linux", "UNIX", "Fedora", "Ubuntu", "MacOS", "Solaris", "MacOS", "Haiku", "Chrome OS", "Sabayon Linux", "Android", "BlackBerry OS"];
+
+			foreach($arraySO as $value) {
+				if(strpos($userAgent,$value) !== false){
+					$so = $value;
+					break;
+				}
+			}
+
+			return $so;
+		}//detectarSO
+
+		public function detectarNavegador($userAgent){
+
+			$navegador ="";
+
+			$arrayNavegadores = ["Firefox", "Chrome", "Safari", "Opera", "MSIE", "Trident", "Edge"];
+
+			foreach($arrayNavegadores as $value) {
+				if(strpos($userAgent,$value) !== false){
+					$navegador = $value;
+					break;
+				}
+			}
+
+			return $navegador;
+		}//detectarNavegador
+
+		public function escribirFichero($ip, $pais, $navegador, $so){
+
+			$fichero = fopen("log/mensajes/acceso-denegado.txt","w")
+			or die("Ha habido un error al crear un archivo.");
+
+			fwrite($fichero, "Datos: \n");
+			fwrite($fichero, "Su IP: ".$ip."\n");
+			fwrite($fichero, "Su Pais: ".$pais."\n");
+			fwrite($fichero, "Su Navegador: ".$navegador."\n");
+			fwrite($fichero, "Su SO: ".$so."\n");
+
+			fclose($fichero);
+		
+		}//escribirFichero().
+
+		public function leerFichero(){
+
+			$mensajeTotal = "";
+			$archivo = fopen("log/mensajes/acceso-denegado.txt", "r")
+			or die("No se ha podido leer el fichero");
+
+			while(!feof($archivo)){
+				$linea = fgets($archivo);
+				$saltoLinea = nl2br($linea);
+				$mensajeTotal = $mensajeTotal.$saltoLinea;			
+			}
+
+			return $mensajeTotal;
+		}//leerFichero()
+
 
 	}// De la clase
 

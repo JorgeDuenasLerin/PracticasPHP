@@ -1,18 +1,19 @@
 <?php 
     session_start();
+   
+    require_once('src/DataBaseConnection.php');
 
     $usuario = "";
     $pass = "";
     $forbiden="";
-    $estaLogueado = false;
-    $listaErrores =[];
-    $infoList = ["info1"=>"Info1", "info2"=>"Info2", "info3"=>"Info3", "info4"=>"Info4", "info5"=>"Info5"];
     $dimension = 200;
-
-    require_once('src/DataBaseConnection.php');
+    $listaErrores =[];
+    $agente = $_SERVER['HTTP_USER_AGENT'];
 
     $conexion = new DataBaseConnection();
 
+    /******************************************************************/
+    /*Tratamos el formulario y activamos la session si todo esta bien*/
     if(isset($_POST['submit'])){
       if(!empty($_POST['usuario'])){
         $usuario = $conexion->cleanInput($_POST['usuario']);
@@ -30,9 +31,9 @@
 
         if(password_verify($pass, $passDB[0]['pass'])){
           
-          $estaLogueado = true;
+          $_SESSION['logued'] =true;
           $dimension = 600;
-          var_dump($estaLogueado); 
+  
         }else{
           
           $listaErrores['acceso'] = "Verifique su usuario o contraseña!";
@@ -43,13 +44,41 @@
       }
     }//isset(submit)
 
-    if(estaLogueado){
-      $_SESSION['logued'] =true;
-    }//if(estalogueado)-->SESSION
 
+    /*************************************************************************/
+    /*Si desean acceder al area protegida sin SESSION utilizamos el codigo siguiente*/ 
     if(isset($_GET['error'])){
       $forbiden = "Tiene que loguearse para acceder a los enlaces.";
+
+      /*obtener ip*/
+      $ipDireccion =  $conexion->getIP();
+
+      /*obtener pais del ip*/
+      $ipPais = $conexion->ipPais();
+
+      /*obtener el navegador*/
+      $navegador = $conexion->detectarNavegador($agente);
+
+      /*obtener el SO*/
+      $so = $conexion->detectarSO($agente);
+
+      /*escribir fichero log*/
+      $archivo = $conexion->escribirFichero($ipDireccion, $ipPais, $navegador, $so);
+
+      /*leer fichero log*/
+      $mensaje = $conexion->leerFichero();
+
+    }//$_GET['error'];
+
+    /**************************************************************************/
+    /*Cerramos la session si llegamos a este punto*/
+    if(isset($_GET['cerrar'])){
+
+        session_destroy();
+        header("location:index2.php");
+        
     }
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -72,17 +101,11 @@
 </div>
 
 <div class="topnav">
-  <?php 
-      if($estaLogueado) {
-        foreach ($infoList as $key => $value) { ?>
-          <a href="<?=$key?>.php"><?=$value?></a>
-  
-  <?php } 
-      }else{
-        foreach ($infoList as $value) { ?>
-          <a href="index.php?error=error"><?=$value?></a>
-  <?php }
-      } ?>
+  <a href="info1.php">Info1</a>
+  <a href="info2.php">Info2</a>
+  <a href="info3.php">Info3</a>
+  <a href="info4.php">Info4</a>
+  <a href="info5.php">Info5</a>
   <a href="#" style="float:right">Link</a>
 </div>
 
@@ -92,19 +115,21 @@
       <h2>Bienvenido</h2>
       <?php if(!empty($forbiden)) {?>
         <h3><?=$forbiden?></h3>
+        <h3><?=$mensaje?></h3>
       <?php } ?>
       <h5>Title description, Dec 7, 2017</h5>
-      <?php if($estaLogueado == false) {?>
+      <?php if(!isset($_SESSION['logued'])) {?>
         <p>Debes iniciar sesión para ver el contenido</p>
-      <?php } ?>
+      <?php } else{ $dimension=600; } ?>
       <img class="todo-espacio" src="https://picsum.photos/1200/<?=$dimension?>" />
     </div>
   </div>
   <div class="rightcolumn">
+    <?php if(!isset($_SESSION['logued'])) {?>
     <div class="card">
       <h2>Login</h2>
       <p>
-        <form class="form-login" action="index.php" method="post">
+        <form class="form-login" action="index2.php" method="post">
           <input type="text" name="usuario" placeholder="usuario"></br>
           <input type="password" name="pass"  placeholder="contraseña"></br>
           <?php if(count($listaErrores) > 0) { ?>
@@ -118,6 +143,12 @@
         </form>
       </p>
     </div>
+    <?php }else{ ?>
+    <div class="card2">
+      <h2>Cerrar Sesión</h2>
+        <a href="index2.php?cerrar=cerrar"><img src="css/images/iconfinder_session_45244.png" alt="img"></a>
+    </div>
+  <?php } ?>
   </div>
 </div>
 
