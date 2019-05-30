@@ -2,7 +2,7 @@
   session_start();
 
   if(!isset($_SESSION['logued'])){
-    header('location:index2.php?error=error');
+    header('location:index.php?error=error');
     die();
   }
  ?>

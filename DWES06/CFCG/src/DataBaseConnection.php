@@ -1,5 +1,5 @@
 <?php 
-	require_once('./config/bd_config.php');
+	include_once('./config/bd_config.php');
 
 	/*
 	* Clase que establece la conexión con la base de datos
@@ -28,7 +28,30 @@
 				echo '<p>No se ha podido realizar la conexión.'.$ex->getMessage()."</p>";;
 			}
 		}//__construct()
+		public function existeUsuario($nombre){
+			$mensaje = "Usuario no registrado"; 
 
+			try{
+				$buscado = $this->dbPDO->prepare("SELECT count(*) from usuario WHERE nombre = ?");
+				$buscado->bindParam(1, $nombre);
+				$buscado->execute();
+
+				$encontrado = $buscado->fetchColumn();
+
+				if(!$encontrado == 0){
+					
+					return true;
+				}else{
+
+					return false;
+				}
+
+			}catch(PDOException $ex){
+
+				echo "Error de base datos: ".$ex->getMessage();
+			}
+
+		}//existeUsuario();
 		public function loguearse($nombre){
 
 			$mensaje = "Usuario no registrado";
