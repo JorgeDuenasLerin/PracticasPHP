@@ -9,14 +9,21 @@ class metodos {
     }//cleanInput()
 
     public function gestionarDatos(string $usuario, string $password){
+        $usuario = clearInput($usuario);
+        $password = clearInput($password);
+
+        if(strpos("@", $usuario)){
+            gestionarCorreo($usuario, $password);
+        } else {
+            gestionarUsuario($usuario, $password);
+        }
+    }
+
+    public function gestionarUsuario(string $usuario, string $password){
         
     }
 
-    public function consultaUsuario(string $usuario, string $password){
-
-    }
-
-    public function consultaCorreo(string $email, string $password){
+    public function gestionarCorreo(string $email, string $password){
         
     }
 }
