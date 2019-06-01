@@ -13,7 +13,7 @@
         Rebeca Antón Ruiz<br>
         Jorge Dueñas Lerín<br>
     </p>
-    <?php foreach([2, 3, 4, 5] as $i){ ?>
+    <?php foreach([2, 3, 4, 5, 6, 7] as $i){ ?>
       <ul>
         <li>
           DWES0<?=$i?>
