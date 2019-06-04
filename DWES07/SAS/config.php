@@ -1,7 +1,7 @@
 <?php 
 $db_user = 'usu_bbdd';
 $db_pass = '1234';
-$db_name = 'dwes';
+$db_name = 'dwes07';
 
 
 /* Google App Client Id */

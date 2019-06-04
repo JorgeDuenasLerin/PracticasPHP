@@ -34,6 +34,22 @@ class conexionBBDD {
      * Comprobar si el usuario o correo existe
      * Comprobar que ese usuario y su contraseña coincida
      */
+    public function obtenerDatosUsuario(String $email){
+        $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE email = :email;");
+        $rs->bindParam(':email', $email);
+         
+        if(!$rs){
+            print_r($this->dbPDO->errorInfo());
+        } else {   
+            $rs->execute();
+            echo "<pre>";
+            print_r($rs->execute());
+            print_r($rs->fetchAll(PDO::FETCH_ASSOC));
+            echo "</pre>";
+            
+            return $rs->fetchAll(PDO::FETCH_ASSOC);
+        }
+    }
 
     public function consultarUsuarioPorId(String $id){
         $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE id = :id;");
@@ -52,47 +68,106 @@ class conexionBBDD {
         }
     }
 
-    public function consultarNombre(String $nombre){
-        $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE nombre = :nombre;");
-        $rs->bindParam(':nombre', $nombre);
+    public function consultarUsuarioPorEmail(String $email){
+        $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE email = :email;");
+        $rs->bindParam(':email', $email);
+         
+        if(!$rs){
+            print_r($this->dbPDO->errorInfo());
+        } else {   
+            $rs->execute();
+            // echo "<pre>";
+            // print_r($rs->execute());
+            // print_r($rs->fetchAll(PDO::FETCH_ASSOC));
+            // echo "</pre>";
+            
+            return $rs->rowCount();
+        }
+    }
+
+    public function consultarUsuarioPorUsername(String $username){
+        $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE username = :username;");
+        $rs->bindParam(':username', $username);
 
         if(!$rs->execute()){
             print_r($this->dbPDO->errorInfo());
         } else {
             $rs->execute();        
-            return $rs->fetchAll(PDO::FETCH_ASSOC);;
+            return $rs->rowCount();
         }
     }
 
-    public function consultarUsuario(String $nombre, String $pass){
-        //$sentenciaSQL=$this->dbPDO->query('SELECT * FROM agenda')->fetchAll();
-      
-        $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE nombre = :nombre");
-        $rs->bindParam(':nombre', $nombre);
-        $rs->execute();
-
-        if(!$rs){
-            // echo "<h1>conexMetodosBBDD.php - NO Funciona la consulta</h1>";
-            print_r($this->dbPDO->errorInfo());         
+    public function comprobarUsuario(String $username, String $pass){
+        
+        $arroba = strpos($username, '@');
+        // lo que costó, strpos no funciona bien para comprobar
+        if(is_int($arroba)) {
+            // $rs = self::consultarUsuarioPorEmail($username);
+            $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE email = :email;");
+            $rs->bindParam(':email', $email);
         } else {
-            // echo "<h1>conexMetodosBBDD.php - Funciona la consulta</h1>";
-            $resultado = $rs->fetchAll(PDO::FETCH_ASSOC);
-
-            if($resultado){
-               
+            // $rs = self::consultarUsuarioPorUsername($username);
+            $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE username = :username;");
+            $rs->bindParam(':username', $username);
+        }
+        $rs->execute();
+        if($rs){
+            $rs->fetchAll(PDO::FETCH_ASSOC);
+            $pass = password_hash($pass, PASSWORD_DEFAULT);
+            if($rs){
+                echo "<pre>";
+                echo "<b>{rs}</b>";
+                print_r($rs);
+                echo "</pre>";
                 
-                $passbbdd = $resultado[0]['pass'];
+                $passbbdd = $rs[0]['pass'];
                 if(password_verify($pass, $passbbdd)){
-                    // echo "<h1>CONTRASEÑA CORRECTA</h1>";
-                    return $resultado;
-                    //return $resultado;
+                     echo "<h1>CONTRASEÑA CORRECTA</h1>";
+                    return $rs;
                 } else {
-                    // echo "<h1>CONTRASEÑA INCORRECTA</h1>";
+                     echo "<h1>CONTRASEÑA INCORRECTA</h1>";
                     return false;
                 }
-                //echo "<h1>$passbbdd</h1>";
+                echo "<h1>$passbbdd</h1>";
+                // return $resultado = $rs->rowCount();
+            } else {
+                //echo "1<br>";
+                echo "<h1>conexMetodosBBDD.php - NO Funciona la consulta</h1>";
+                print_r($this->dbPDO->errorInfo());
+                return 0;
             }
-            //echo "<p>$nombre</p><p>$pass</p>";
+        } else {
+            //echo "2<br>";
+            print_r($this->dbPDO->errorInfo());
+            //return null;
+        }
+    } // comprobarUsuario
+
+    public function insertarUsuario($username, $email, $pass){
+        $rs = self::consultarUsuarioPorEmail($email);
+        if($rs == 0){
+            $rs = self::consultarUsuarioPorUsername($username);
+            if($rs == 0){
+                $pass = password_hash($pass, PASSWORD_DEFAULT);
+                $rs=$this->dbPDO->prepare("INSERT INTO usuario (username, email, pass) VALUES (:username, :email, :pass);");
+                $rs->bindParam(':username', $username);
+                $rs->bindParam(':email', $email);
+                $rs->bindParam(':pass', $pass);
+                $rs->execute();
+                
+                if($rs){
+                    return $resultado = $rs->rowCount();
+                } else {
+                    //echo "1<br>";
+                    return 0;
+                }
+            } else {
+                //echo "2<br>";
+                return null;
+            }
+        } else {
+            //echo "3<br>";
+            return false;
         }
     }
 

@@ -1,33 +1,20 @@
 <?php 
 require_once "metodos.php";
-$instancia = new metodos();
+$metodo = new metodos();
 
 $mensaje = "";
 
-if(isset($_POST['login'])){
-  if(isset($_POST['user'])){
-    if(empty($_POST['user'])){
-      $mensaje = "No has introducido email o user";
-    }
-    if(empty($_POST['password'])){
-      $mensaje = "No has introducido contraseña";
-    }
-    if(!empty($_POST['user']) && !empty($_POST['password'])){
-      $instancia->iniciarSesion($_POST['user'], $_POST['password']);
-      echo "<pre>";
-      echo "<b>{instancia}</b>";
-      print_r($instancia);
-      echo "</pre>";
-      if (empty((array) $instancia)) {
-        $mensaje = "Username o correo ya registrado, utiliza otro";
+if(isset($_POST['reset'])){
+    if(!empty($_POST['email'])){
+      $existeCorreo = $metodo->restablecerContra($_POST['email']);
+      if(!$existeCorreo){
+        $mensaje = "No existe ese correo";
       } else {
-        header('location: index.php');
+        // echo "si que existe";
       }
     } else {
-      $mensaje = "Rellena los campos para logearte";
+      $mensaje = "Introduce un correo porfavor";
     }
-  }// isset user
-
 }
 
 ?>
@@ -60,8 +47,7 @@ if(isset($_POST['login'])){
     <aside class="col-md-12 col-md-offset-3 text-center">
       <div class="card">
         <article class="card-body">
-          <h4 class="card-title text-center mb-4 mt-1">Sign in</h4>
-          <a href="" class="btn btn-block btn-outline-info"> <i class="fab fa-google"></i>   Login via Google</a>
+          <h4 class="card-title text-center mb-4 mt-1">Reset Password</h4>
           <hr>
           <p class="text-danger text-center"><?= $mensaje ?></p>
           <form method="POST">
@@ -70,31 +56,14 @@ if(isset($_POST['login'])){
               <div class="input-group-prepend">
                   <span class="input-group-text"> <i class="fa fa-user"></i> </span>
               </div>
-              <input name="user" class="form-control" placeholder="Email or user" type="text" value="Usuario3@gmail.com">
+              <input name="email" class="form-control" placeholder="Email" type="email">
             </div> <!-- input-group.// -->
           </div> <!-- form-group// -->
-
-          <div class="form-group">
-            <div class="input-group">
-              <div class="input-group-prepend">
-                  <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
-              </div>
-                <input name="password" class="form-control" placeholder="******" type="password" value="12345">
-            </div> <!-- input-group.// -->
-          </div> <!-- form-group// -->
-
-
-
-          <div class="form-group">
-            <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" id="defaultUnchecked">
-                <label class="custom-control-label" for="defaultUnchecked">Mantener sesión iniciada</label>
-            </div>
-            <br>
-            <button type="submit" name="login" class="btn btn-primary btn-block"> Iniciar sesión  </button>
-          </div> <!-- form-group// -->
-          <p class="text-center"><a href="reset.php" class="btn">¿Olvidaste la contraseña?</a></p>
-          <p class="text-center"><a href="register.php" class="btn">¿No tienes cuenta?<br>Registrate aquí</a></p>
+          
+            <div class="form-group">
+                <br>
+                <button type="submit" name="reset" class="btn btn-primary btn-block">Resetear contraseña</button>
+            </div> <!-- form-group// -->
           </form>
         </article>
       </div> <!-- card.// -->
