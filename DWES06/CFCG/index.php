@@ -17,15 +17,20 @@
     if(isset($_POST['submit'])){
       if(!empty($_POST['usuario'])){
         $usuario = $conexion->cleanInput($_POST['usuario']);
+        $encontrado = $conexion->existeUsuario($usuario);
+
       }else{
          $listaErrores['nombre']= '*Introducir un nombre';
       
       }
+    
 
       if(!empty($_POST['pass'])){
         $pass = $conexion->cleanInput($_POST['pass']);
-
-        $passDB = $conexion->loguearse($usuario);
+        
+        if($encontrado){
+          $passDB = $conexion->obtenerPass($usuario);
+        }
 
         $hashPass = $passDB[0]['pass'];//loguearse devuelve un array con un elemento([0])y ese elemento a la vez devuelve un array con un solo elemento que es pass(nombre de la columna de la base de datos a la cual hemos hecho la consulta.);
 
