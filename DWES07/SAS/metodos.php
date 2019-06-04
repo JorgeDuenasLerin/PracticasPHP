@@ -45,6 +45,11 @@ class metodos {
         if($existe == 1 ){
             // obtener id del usuario
             $datosUsuario = $conexion->obtenerDatosUsuario($email);
+            echo "<pre>";
+            echo "<b>{datosUsuario}</b>";
+            print_r($datosUsuario);
+            echo "</pre>";
+            
             $datosUsuario = $datosUsuario[0];
             $id = $datosUsuario['id'];
 
@@ -64,8 +69,15 @@ class metodos {
 
     public function comprobarToken($token, $id){
         $conexion = new conexionBBDD();
-        $existe = $conexion->comprobarToken($email);
+        $existe = $conexion->comprobarToken($token, $id);
         return $existe;
+        $conexion->__destruct();
+    }
+
+    public function cambiarContra($id, $pass){
+        $conexion = new conexionBBDD();
+        $cambiarContra = $conexion->cambiarPass($id, $pass);
+        return $cambiarContra;
         $conexion->__destruct();
     }
   

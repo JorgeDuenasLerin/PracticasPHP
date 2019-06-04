@@ -6,11 +6,25 @@ $mensaje = "";
 
 if(isset($_POST['cambiar'])){
     if(!empty($_POST['password1']) && !empty($_POST['password2'])){
+      // echo $_POST['password1'];
+      // echo " == ";
+      // echo $_POST['password2'];
       if($_POST['password1'] == $_POST['password2']) {
         if(!empty($_GET['id']) && !empty($_GET['token'])){
           $comprobarToken = $instancia->comprobarToken($_GET['token'], $_GET['id']);
           if($comprobarToken){
             // consulta de cambiar la contraseña
+            $cambiarContra = $instancia->cambiarContra($_GET['id'],$_POST['password1']);
+            if($cambiarContra){
+              echo '<div class="alert alert-success" role="alert">
+                      Tu contraseña se ha cambiado existosamente, redirigiendo!
+                    </div>';
+               header("Refresh: 3; url=login.php");
+            } else {
+              echo '<div class="alert alert-warning" role="alert">
+                      This is a warning alert—check it out!
+                    </div>';
+            }
           }
         }
       } else {
@@ -61,7 +75,7 @@ if(isset($_POST['cambiar'])){
                 <div class="input-group-prepend">
                     <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                 </div>
-                    <input name="password1" class="form-control" placeholder="******" type="password">
+                    <input name="password1" class="form-control" placeholder="******" type="password" value="123456">
                 </div> <!-- input-group.// -->
             </div> <!-- form-group// -->
 
@@ -70,7 +84,7 @@ if(isset($_POST['cambiar'])){
                 <div class="input-group-prepend">
                     <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                 </div>
-                    <input name="password2" class="form-control" placeholder="******" type="password">
+                    <input name="password2" class="form-control" placeholder="******" type="password" value="123456">
                 </div> <!-- input-group.// -->
             </div> <!-- form-group// -->
 

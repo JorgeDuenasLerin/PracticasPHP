@@ -28,6 +28,7 @@ class conexionBBDD {
     /*NOTAS A TENER EN CUENTA
     EN GENERAL: IMPORTANTE QUE SEA PREPARE Y NO QUERY
     CONSULTAS UPDATE, DELETE Y INSERT: hacer un fetchAll no devolverá nada, con lo cual hay que hacer ->rowCount()
+    si haces un print_r($rs->fetchAll(PDO::FETCH_ASSOC)); aunque sea un print se pierde lo que hay en $rs, por lo tanto hay que borrar las impresiones y devolver $rs despues de ejecutar
     */ 
 
     /**
@@ -37,15 +38,30 @@ class conexionBBDD {
     public function obtenerDatosUsuario(String $email){
         $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE email = :email;");
         $rs->bindParam(':email', $email);
-         
+        $rs->execute();
+
         if(!$rs){
             print_r($this->dbPDO->errorInfo());
         } else {   
-            $rs->execute();
-            echo "<pre>";
-            print_r($rs->execute());
-            print_r($rs->fetchAll(PDO::FETCH_ASSOC));
-            echo "</pre>";
+            // echo "<pre>";
+            // print_r($rs->fetchAll(PDO::FETCH_ASSOC));
+            // echo "</pre>";
+            
+            return $rs->fetchAll(PDO::FETCH_ASSOC);
+        }
+    }
+
+    public function obtenerDatosUsername(String $username){
+        $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE username = :username;");
+        $rs->bindParam(':username', $username);
+        $rs->execute();
+
+        if(!$rs){
+            print_r($this->dbPDO->errorInfo());
+        } else {   
+            // echo "<pre>";
+            // print_r($rs->fetchAll(PDO::FETCH_ASSOC));
+            // echo "</pre>";
             
             return $rs->fetchAll(PDO::FETCH_ASSOC);
         }
@@ -102,44 +118,34 @@ class conexionBBDD {
         $arroba = strpos($username, '@');
         // lo que costó, strpos no funciona bien para comprobar
         if(is_int($arroba)) {
-            // $rs = self::consultarUsuarioPorEmail($username);
-            $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE email = :email;");
-            $rs->bindParam(':email', $email);
+            $usuario = self::obtenerDatosUsuario($username);
+
         } else {
-            // $rs = self::consultarUsuarioPorUsername($username);
-            $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE username = :username;");
-            $rs->bindParam(':username', $username);
+            $usuario = self::obtenerDatosUsername($username);
         }
-        $rs->execute();
-        if($rs){
-            $rs->fetchAll(PDO::FETCH_ASSOC);
-            $pass = password_hash($pass, PASSWORD_DEFAULT);
-            if($rs){
-                echo "<pre>";
-                echo "<b>{rs}</b>";
-                print_r($rs);
-                echo "</pre>";
-                
-                $passbbdd = $rs[0]['pass'];
-                if(password_verify($pass, $passbbdd)){
-                     echo "<h1>CONTRASEÑA CORRECTA</h1>";
-                    return $rs;
-                } else {
-                     echo "<h1>CONTRASEÑA INCORRECTA</h1>";
-                    return false;
-                }
-                echo "<h1>$passbbdd</h1>";
-                // return $resultado = $rs->rowCount();
+
+        if($usuario){
+            $usuario = $usuario[0];
+            // echo "<pre>";
+            // echo "<b>{usuario}</b>";
+            // print_r($usuario);
+            // echo "</pre>";
+            $passbbdd = $usuario['pass'];
+            echo "$pass - $passbbdd";
+            if(password_verify($pass, $passbbdd)){
+                 echo "<h1>CONTRASEÑA CORRECTA</h1>";
+                return $usuario;
             } else {
-                //echo "1<br>";
-                echo "<h1>conexMetodosBBDD.php - NO Funciona la consulta</h1>";
-                print_r($this->dbPDO->errorInfo());
-                return 0;
+                 echo "<h1>CONTRASEÑA INCORRECTA</h1>";
+                return false;
             }
-        } else {
-            //echo "2<br>";
+            echo "<h1>$passbbdd</h1>";
+            // return $resultado = $rs->rowCount();        
+        }  else {
+            //echo "1<br>";
+            echo "<h1>conexMetodosBBDD.php - No existe el usuario</h1>";
             print_r($this->dbPDO->errorInfo());
-            //return null;
+            return false;
         }
     } // comprobarUsuario
 
@@ -227,14 +233,13 @@ class conexionBBDD {
         $pass = password_hash($pass, PASSWORD_DEFAULT);
         $rs = $this->dbPDO->prepare("UPDATE usuario SET pass = ? WHERE id = ?");
         $rs->execute([$pass, $id]);
-        //echo "$id $pass<br>";
-
+        // echo "$id $pass<br>";
         if(!$rs){
             print_r($this->dbPDO->errorInfo());
         } else {   
             return $rs->rowCount();
         }
-
+        die();
     }
     
 } // de la clase conexMetodosBBDD

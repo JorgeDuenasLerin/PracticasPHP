@@ -18,7 +18,7 @@ if(isset($_POST['login'])){
       echo "<b>{instancia}</b>";
       print_r($instancia);
       echo "</pre>";
-      if (empty((array) $instancia)) {
+      if (!$instancia) {
         $mensaje = "Username o correo ya registrado, utiliza otro";
       } else {
         header('location: index.php');
