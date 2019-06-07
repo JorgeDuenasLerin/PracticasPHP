@@ -4,18 +4,46 @@ $metodo = new metodos();
 
 $mensaje = "";
 
+require_once('config.php');
+$login_url = 'https://accounts.google.com/o/oauth2/v2/auth?scope=' . urlencode('https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email') . '&redirect_uri=' . urlencode(CLIENT_REDIRECT_URL) . '&response_type=code&client_id=' . CLIENT_ID . '&access_type=online';
+
+
+$arrayRegistro = [
+  "10" => "Registrado correctamente",
+  "11" => "Ya existe ese correo",
+  "12" => "Ya existe ese usuario",
+  "13" => "No se ha podido insertar ese usuario",
+];
+
 if(isset($_POST['register'])){
   if(!empty($_POST['user']) && !empty($_POST['email']) && !empty($_POST['password'])){
     $metodo->registrarUsuario($_POST['user'], $_POST['email'], $_POST['password']);
-    
+    $metodo = (array)$metodo;
+
     // comprobar si un objeto esta vacio | 2 formas 
-    // $arr = (array)$obj;
+    // $arr = (array)$resultado;
     // if (empty($arr)) {
     //     // do stuff
     // }
+     
+    //$metodo = (string)$metodo;
+    //var_dump((string) $metodo);
+    //$metodo = strval($metodo);
+    //$metodo = print_r($metodo,true);
 
-    if (empty((array) $metodo)) {
-        $mensaje = "Username o correo ya registrado, utiliza otro";
+    if($metodo['codigo'] == "10"){
+      // echo "<h1>register.php | usuario insertado correctamente</h1>";
+      echo '<div class="alert alert-success" role="alert">
+                  Te registraste correctamente, redirigiendo!
+                </div>';
+      header("Refresh:4; url=index.php");
+    } else {
+        foreach ($arrayRegistro as $key => $value) {
+          if($key == $metodo['codigo']){
+            $mensaje = $value;
+            // echo "<h1>register.php | $mensaje</h1>";
+          }
+        }
     }
   } else {
     $mensaje = "Rellene todos los campos";
@@ -53,7 +81,7 @@ if(isset($_POST['register'])){
       <div class="card">
         <article class="card-body">
           <h4 class="card-title text-center mb-4 mt-1">Sign up</h4>
-          <a href="" class="btn btn-block btn-outline-info"> <i class="fab fa-google"></i>   Login via Google</a>
+          <a href="<?= $login_url ?>" class="btn btn-block btn-outline-info"> <i class="fab fa-google"></i>   Login via Google</a>
           <hr>
           <p class="text-danger text-center"><?= $mensaje ?></p>
           <form method="POST">

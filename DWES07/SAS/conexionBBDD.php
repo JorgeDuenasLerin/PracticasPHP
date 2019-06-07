@@ -35,8 +35,8 @@ class conexionBBDD {
      * Comprobar si el usuario o correo existe
      * Comprobar que ese usuario y su contraseña coincida
      */
-    public function obtenerDatosUsuario(String $email){
-        $rs = $this->dbPDO->prepare("SELECT * FROM usuario WHERE email = :email;");
+    public function obtenerDatosUsuario(String $email, String $tabla="usuario"){
+        $rs = $this->dbPDO->prepare("SELECT * FROM $tabla WHERE email = :email;");
         $rs->bindParam(':email', $email);
         $rs->execute();
 
@@ -124,56 +124,56 @@ class conexionBBDD {
             $usuario = self::obtenerDatosUsername($username);
         }
 
-        if($usuario){
+        if($usuario == true){
             $usuario = $usuario[0];
             // echo "<pre>";
             // echo "<b>{usuario}</b>";
             // print_r($usuario);
             // echo "</pre>";
             $passbbdd = $usuario['pass'];
-            echo "$pass - $passbbdd";
+            //echo "$pass - $passbbdd";
             if(password_verify($pass, $passbbdd)){
-                 echo "<h1>CONTRASEÑA CORRECTA</h1>";
-                return $usuario;
+                //echo "<h1>CONTRASEÑA CORRECTA</h1>";
+                return 20;
             } else {
-                 echo "<h1>CONTRASEÑA INCORRECTA</h1>";
-                return false;
+                //echo "<h1>CONTRASEÑA INCORRECTA</h1>";
+                return 22;
             }
-            echo "<h1>$passbbdd</h1>";
+            //echo "<h1>$passbbdd</h1>";
             // return $resultado = $rs->rowCount();        
         }  else {
             //echo "1<br>";
-            echo "<h1>conexMetodosBBDD.php - No existe el usuario</h1>";
-            print_r($this->dbPDO->errorInfo());
-            return "false";
+            //echo "<h1>conexMetodosBBDD.php - No existe el usuario</h1>";
+            //print_r($this->dbPDO->errorInfo());
+            return 21;
         }
     } // comprobarUsuario
 
-    public function insertarUsuario($username, $email, $pass){
+    public function insertarUsuario($username, $email, $pass, $tabla = "usuario"){
         $rs = self::consultarUsuarioPorEmail($email);
         if($rs == 0){
             $rs = self::consultarUsuarioPorUsername($username);
             if($rs == 0){
                 $pass = password_hash($pass, PASSWORD_DEFAULT);
-                $rs=$this->dbPDO->prepare("INSERT INTO usuario (username, email, pass) VALUES (:username, :email, :pass);");
+                $rs=$this->dbPDO->prepare("INSERT INTO $tabla (username, email, pass) VALUES (:username, :email, :pass);");
                 $rs->bindParam(':username', $username);
                 $rs->bindParam(':email', $email);
                 $rs->bindParam(':pass', $pass);
                 $rs->execute();
                 
                 if($rs){
-                    return $resultado = $rs->rowCount();
+                    return "10";
                 } else {
                     //echo "1<br>";
-                    return 0;
+                    return 13;
                 }
             } else {
                 //echo "2<br>";
-                return null;
+                return 12;
             }
         } else {
             //echo "3<br>";
-            return false;
+            return 11;
         }
     }
 

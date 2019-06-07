@@ -22,6 +22,7 @@ CREATE TABLE usuariosg (
   username VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL,
   pass VARCHAR(255) NOT NULL,
+  userid INT,
   PRIMARY KEY (id)
 );
 

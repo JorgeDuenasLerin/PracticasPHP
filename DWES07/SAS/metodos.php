@@ -19,29 +19,28 @@ class metodos {
         $password = self::cleanInput($password); 
         $conexion = new conexionBBDD();
         $resultado = $conexion->comprobarUsuario($usuario, $password);
-        echo "<pre>";
-        echo "<b>{value}</b>";
-        print_r($resultado);
-        echo "</pre>";
-        
-        echo "<pre>";
-        echo "<b>{conexion}</b>";
-        print_r($conexion);
-        echo "</pre>";
-        die();
-        
-        return $conexion;
+        $this->codigo = $resultado;
+
+        return $resultado;
         $conexion->__destruct();
     }
-
+    
     public function registrarUsuario(string $usuario, string $email ,string $password){
         $usuario = self::cleanInput($usuario);
         $email = self::cleanInput($email);
         //$password = self::cleanInput($password);
         $conexion = new conexionBBDD();
-        $conexion->insertarUsuario($usuario, $email, $password);
-        return $conexion;
+        $resultado = $conexion->insertarUsuario($usuario, $email, $password);      
+        // echo "<h2>metodos.php | $resultado</h2>";
+        // echo "<pre>";
+        // echo "<b>{value}</b>";
+        // print_r($resultado);
+        // echo "</pre>";
+        
+        $this->codigo = $resultado;
         $conexion->__destruct();
+        return $resultado;
+        
     }
 
     public function restablecerContra($email){

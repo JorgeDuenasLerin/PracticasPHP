@@ -4,6 +4,27 @@ $instancia = new metodos();
 
 $mensaje = "";
 
+require_once('config.php');
+$login_url = 'https://accounts.google.com/o/oauth2/v2/auth?scope=' . urlencode('https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email') . '&redirect_uri=' . urlencode(CLIENT_REDIRECT_URL) . '&response_type=code&client_id=' . CLIENT_ID . '&access_type=online';
+
+
+$arrayErrores = [
+  "90" => "Contraseña incorrecta",
+  "80" => "No existe usuario con ese correo",
+  "70" => "No existe usuario con ese nickname",
+  "60" => "No existe usuario con ese id",
+  "50" => "No existe el usuario introducido",
+  "40" => "Ya existe ese usuario, introduce otro",
+  "30" => "Este correo ya esta registrado, introduce otro",
+];
+
+$arrayLogin = [
+  "20" => "Login correcto",
+  "21" => "Usuario incorrecto",
+  "22" => "Contraseña incorrecta",
+];
+
+
 if(isset($_POST['login'])){
   if(isset($_POST['user'])){
     if(empty($_POST['user'])){
@@ -13,15 +34,23 @@ if(isset($_POST['login'])){
       $mensaje = "No has introducido contraseña";
     }
     if(!empty($_POST['user']) && !empty($_POST['password'])){
-      $instancia->iniciarSesion($_POST['user'], $_POST['password']);
-      echo "<pre>";
-      echo "<b>{instancia}</b>";
-      print_r($instancia);
-      echo "</pre>";
-      if (!$instancia) {
-        $mensaje = "Username o correo ya registrado, utiliza otro";
+      $metodo = $instancia->iniciarSesion($_POST['user'], $_POST['password']);
+      if(gettype($metodo) == "Objetc"){
+        $metodo = (array)$metodo;
+      }
+      //echo $metodo;
+      if ($metodo == 20) {
+        echo '<div class="alert alert-success" role="alert">
+                  INICIASTE SESION correctamente, redirigiendo!
+                </div>';
+        header("Refresh:4; url=index.php"); 
       } else {
-        header('location: index.php');
+        foreach ($arrayLogin as $key => $value) {
+          if($metodo == $key){
+            $mensaje = $value;
+            // echo "<h2>login.php | $mensaje</h2>";
+          }
+        }
       }
     } else {
       $mensaje = "Rellena los campos para logearte";
@@ -61,7 +90,7 @@ if(isset($_POST['login'])){
       <div class="card">
         <article class="card-body">
           <h4 class="card-title text-center mb-4 mt-1">Sign in</h4>
-          <a href="" class="btn btn-block btn-outline-info"> <i class="fab fa-google"></i>   Login via Google</a>
+          <a href="<?= $login_url ?>" class="btn btn-block btn-outline-info"> <i class="fab fa-google"></i>   Login via Google</a>
           <hr>
           <p class="text-danger text-center"><?= $mensaje ?></p>
           <form method="POST">

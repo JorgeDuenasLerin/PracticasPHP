@@ -19,7 +19,34 @@ if(isset($_GET['code'])) {
 		$access_token = $data['access_token'];
 		
 		// Get user information
-		$user_info = GetUserProfileInfo($access_token);
+        $user_info = GetUserProfileInfo($access_token);
+
+        require_once('conexionBBDD.php');
+        $conexion = new conexionBBDD();
+        if($conexion->consultarUsuarioPorEmail($user_info['email']) == 1 ){
+            $usuario = $conexion->obtenerDatosUsuario($user_info['email']);
+            $usuario = $usuario[0];
+            $conexion->insertarUsuario($user_info['email'], $usuario['username'], $usuario['pass'], $usuario['id'], "usuariosg");
+            $id = $usuario['id'];
+        } else {
+            $conexion->insertarUsuario($user_info['email'], $user_info['name'], '', NULL, "usuariosg");
+            $usuario = $conexion->obtenerDatosUsuario($user_info['email'], "usuariosg");
+            $id = $usuario['id'];
+        }
+        require_once('metodos.php');
+        $metodo = new Metodos();
+        $token = $metodo->generateToken();
+        $conexion->insertarToken($token, $id);
+        session_start();
+        $_SESSION['logged'] = true;
+        
+        // echo "<pre>";
+        // echo "<b>{value}</b>";
+        // print_r(get_defined_vars());
+        // echo "</pre>";
+        // die();
+        
+        header("location: index.php");
 	}
 	catch(Exception $e) {
 		echo $e->getMessage();
@@ -28,73 +55,3 @@ if(isset($_GET['code'])) {
 }
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-</head>
-<body>
-    <?php 
-    foreach ($user_info as $key => $value) {
-        echo $key;
-        echo " - ";
-        echo $value;
-        echo "<br>";
-    }
-
-    echo "<pre>";
-    echo "<b>_GET</b><br>";
-    print_r($_GET);
-    echo "</pre>";
-
-    echo "<pre>";
-    echo "<b>_POST</b><br>";
-    print_r($_POST);
-    echo "</pre>";
-
-    if(isset($_SESSION)){
-        echo "<pre>";
-        echo "<b>_SESSION</b><br>";
-        print_r($_SESSION);
-        echo "</pre>";
-    }
-    
-    echo "<pre>";
-    echo "<b>_COOKIE</b><br>";
-    print_r($_COOKIE);
-    echo "</pre>";
-
-    ?>
-<div class="container">
-    <div class="row">
-        <div class="col-sm-12 align-self-center">
-            <table class="table">
-                <thead class="thead-dark">
-                    <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Correo</th>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Foto</th>
-                    <th scope="col">Enlace foto</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                    <th scope="row">1</th>
-                    <td><?= $user_info['email'] ?></td>
-                    <td><?= $user_info['name'] ?></td>
-                    <td><img src="<?= $user_info['picture'] ?>" width="70%"/></td>
-                    <td><a href="<?= $user_info['picture'] ?>"><?= $user_info['picture'] ?></a></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</body>
-</html>
