@@ -74,11 +74,11 @@
     header('Location:index.php');
   };
 
-  // echo "<b>1ºvez Token Correo: </b>";echo $tokenCorreo; echo "<br>";
+  
   // echo "<b>1ºvez Id Correo: </b>";echo $idCorreo; echo "<br>";
   // echo "<b>1ºvez Token base de datos: </b>";echo $tokenBaseDatos; echo "<br><br>";
 
-  // echo "<b>2ºvez Id pagina: </b>";echo $idPag; echo "<br>";
+  
   // echo "<b>2ºvez Token Correo reenviado: </b>";echo $tokenCorreoRe; echo "<br>";
   // echo "<b>2ºvez Token base de datos reenviado: </b>";echo $tokenBaseDatosRe; echo "<br>";
 
