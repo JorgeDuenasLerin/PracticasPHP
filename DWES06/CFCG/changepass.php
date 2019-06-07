@@ -3,6 +3,7 @@
   
   $conexion = new DataBaseConnection();
   $listaErrores = [];
+  $pruebaToken = "";
 
   
   if($_SERVER['REQUEST_METHOD'] == 'POST'){
@@ -16,16 +17,23 @@
         $idCorreo = $conexion->cleanInput($_POST['id']);
 
         $tokenDbArray = $conexion->obtenerToken($idCorreo);
-        $tokenB = $tokenDbArray[0][token];
+        $tokenBaseDatos = $tokenDbArray[0][token];
        }
      
     }//isset($_GET['submit']))-> que viene del email.
-    
     
 
     if(isset($_POST['enviar'])){
       if(!empty($_POST['idPag'])){
         $idPag = $conexion->cleanInput($_POST['idPag']);
+      }
+
+      if(!empty($_POST['tokenCorreoRe'])){
+        $tokenCorreoRe = $conexion->cleanInput($_POST['tokenCorreoRe']);
+      }
+
+      if(!empty($_POST['tokenBaseDatosRe'])){
+        $tokenBaseDatosRe = $conexion->cleanInput($_POST['tokenBaseDatosRe']); 
       }
 
       if(!empty($_POST['pass'])){
@@ -41,19 +49,19 @@
       }
 
       if($pass === $pass2 && !empty($pass) && !empty($pass2)){
-        if($tokenCorreo == $tokenB){
+        if($tokenCorreoRe === $tokenBaseDatosRe){
           $actualizar = $conexion->actualizarPass($idPag, $pass2);
 
           if($actualizar === 1){
             $mensaje = "Su password se ha cambiado satisfactorimente";
-            header("refresh:2; url=index.php");
+            //header("refresh:2; url=index.php");
 
           }elseif ($actualizar === 0) {
             $mensaje = "No se ha podido cambiar su password";
-            header("refresh:2; url=index.php");
+            //header("refresh:2; url=index.php");
           }
         }else{
-           $listaErrores['mensajeToken'] = "*Hay un error de identificación";
+           $listaErrores['mensajeToken'] = "*Hay un error de identificación de datos.";
         }
 
       }elseif($pass !== $pass2 && !empty($pass) && !empty($pass2)){
@@ -64,6 +72,14 @@
   }elseif($_SERVER['REQUEST_METHOD'] == 'GET'){
     header('Location:index.php');
   };
+
+  echo "<b>1ºvez Token Correo: </b>";echo $tokenCorreo; echo "<br>";
+  echo "<b>1ºvez Id Correo: </b>";echo $idCorreo; echo "<br>";
+  echo "<b>1ºvez Token base de datos: </b>";echo $tokenBaseDatos; echo "<br><br>";
+
+  echo "<b>2ºvez Id pagina: </b>";echo $idPag; echo "<br>";
+  echo "<b>2ºvez Token Correo reenviado: </b>";echo $tokenCorreoRe; echo "<br>";
+  echo "<b>2ºvez Token base de datos reenviado: </b>";echo $tokenBaseDatosRe; echo "<br>";
 
  ?>
 <!DOCTYPE html>
@@ -115,12 +131,10 @@
       <?php } ?>
     <form action="changepass.php" method="post">
       <label>Contraseña nueva: </label><br>
-      <?php if(!isset($_POST['enviar'])) {?>
       <input type="hidden" name="idPag" value="<?=$idCorreo?>">
-      <?php } else {?>
-      <input type="hidden" name="idPag" value="<?=$idPag?>">
-      <?php } ?>
-      <input type="password" name="pass" id="myPassword" value="<?=$pass?>" placeholder="contraseña nueva">
+      <input type="hidden" name="tokenCorreoRe" value="<?=$tokenCorreo?>">
+      <input type="hidden" name="tokenBaseDatosRe" value="<?=$tokenBaseDatos?>"><br>
+      <input type="password" name="pass" id="myPassword" placeholder="contraseña nueva">
       <img class="mostrar" src="css/images/icons.png" onmouseover="mouseoverPass();" onmouseout="mouseoutPass();" /><br>
       <label>Confirmar su contraseña: </label><br>
       <input type="password" name="pass2" id="myPassword2" placeholder="confirmar contraseña" />
