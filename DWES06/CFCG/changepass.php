@@ -54,14 +54,15 @@
 
           if($actualizar === 1){
             $mensaje = "Su password se ha cambiado satisfactorimente";
-            //header("refresh:2; url=index.php");
+            header("refresh:2; url=index.php");
 
           }elseif ($actualizar === 0) {
-            $mensaje = "No se ha podido cambiar su password";
-            //header("refresh:2; url=index.php");
+             $listaErrores['mensajeToken'] = "*Hay un error de identificación de datos.";
+            
           }
         }else{
-           $listaErrores['mensajeToken'] = "*Hay un error de identificación de datos.";
+           $mensaje = "No se ha podido cambiar su password";
+            header("refresh:2; url=index.php");
         }
 
       }elseif($pass !== $pass2 && !empty($pass) && !empty($pass2)){
@@ -73,13 +74,13 @@
     header('Location:index.php');
   };
 
-  echo "<b>1ºvez Token Correo: </b>";echo $tokenCorreo; echo "<br>";
-  echo "<b>1ºvez Id Correo: </b>";echo $idCorreo; echo "<br>";
-  echo "<b>1ºvez Token base de datos: </b>";echo $tokenBaseDatos; echo "<br><br>";
+  // echo "<b>1ºvez Token Correo: </b>";echo $tokenCorreo; echo "<br>";
+  // echo "<b>1ºvez Id Correo: </b>";echo $idCorreo; echo "<br>";
+  // echo "<b>1ºvez Token base de datos: </b>";echo $tokenBaseDatos; echo "<br><br>";
 
-  echo "<b>2ºvez Id pagina: </b>";echo $idPag; echo "<br>";
-  echo "<b>2ºvez Token Correo reenviado: </b>";echo $tokenCorreoRe; echo "<br>";
-  echo "<b>2ºvez Token base de datos reenviado: </b>";echo $tokenBaseDatosRe; echo "<br>";
+  // echo "<b>2ºvez Id pagina: </b>";echo $idPag; echo "<br>";
+  // echo "<b>2ºvez Token Correo reenviado: </b>";echo $tokenCorreoRe; echo "<br>";
+  // echo "<b>2ºvez Token base de datos reenviado: </b>";echo $tokenBaseDatosRe; echo "<br>";
 
  ?>
 <!DOCTYPE html>
