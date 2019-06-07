@@ -145,7 +145,7 @@ class conexionBBDD {
             //echo "1<br>";
             echo "<h1>conexMetodosBBDD.php - No existe el usuario</h1>";
             print_r($this->dbPDO->errorInfo());
-            return false;
+            return "false";
         }
     } // comprobarUsuario
 

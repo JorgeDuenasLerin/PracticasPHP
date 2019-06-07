@@ -18,11 +18,17 @@ class metodos {
         $usuario = self::cleanInput($usuario);
         $password = self::cleanInput($password); 
         $conexion = new conexionBBDD();
-        $conexion->comprobarUsuario($usuario, $password);
+        $resultado = $conexion->comprobarUsuario($usuario, $password);
+        echo "<pre>";
+        echo "<b>{value}</b>";
+        print_r($resultado);
+        echo "</pre>";
+        
         echo "<pre>";
         echo "<b>{conexion}</b>";
         print_r($conexion);
         echo "</pre>";
+        die();
         
         return $conexion;
         $conexion->__destruct();
