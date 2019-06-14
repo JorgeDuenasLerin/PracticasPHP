@@ -1,0 +1,151 @@
+@charset "utf-8";
+/* PROGRAMACION WEB EN PHP                  */
+/* Bartolome Sintes Marco                   */
+/* http://www.mclibre.org                   */
+/*                                          */
+/* CSS soluciones de los ejercicios         */
+/*                                          */
+/* 10 de septiembre de 2017                 */
+/*                                          */
+
+body {
+  padding: 0 20px;
+  background-color: #F6F6FF;
+  font-family: sans-serif;
+}
+
+h1 {
+  margin: 10px;
+  font-size: 150%;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-size: 125%;
+}
+
+fieldset {
+  border: #8686FF 3px solid;
+  padding: 10px 20px 20px;
+  background-color: #E6E6FF;
+}
+
+legend {
+  border: #8686FF 3px solid;
+  padding: 0 10px;
+  background-color: white;
+  font-size: 120%;
+}
+
+input {
+  font-size: 100%;
+}
+
+.aviso {
+  color: red;
+}
+
+.grande {
+  font-size: 200%;
+}
+
+.derecha {
+  text-align: right;
+}
+
+table.conborde, table.conborde td, table.conborde th {
+  border: black 1px solid;
+}
+
+footer {
+  border-top: black 1px solid;
+  margin-top: 2em;
+}
+
+footer cite {
+  font-weight: bold;
+}
+
+/***************** tragaperras 2-1 ********************/
+main.contenedor{
+  display: grid;
+  grid-template-columns:500px auto;
+  grid-template-rows: 1fr;
+  justify-items: center;
+  border: 2px solid #000;
+  width: 39vw;
+  height: 12%;
+  padding: 16px 0px;
+  margin: 0 auto;
+}
+
+main.contenedor img{
+  width: 150px;
+  height: 150px;
+  border: 3px solid black;
+}
+
+div.formulario{
+
+}
+
+form{
+  display: grid;  
+  grid-template-rows: auto;
+  grid-template-columns:1fr 1fr;
+  justify-items:center;
+}
+
+input{
+  width: 48%;
+  text-align: center;
+  font-size: .7em;
+  padding-left: 0;
+}
+
+input:nth-of-type(1){
+  grid-column: 1 / 2;
+  grid-row: 2 /3;
+  width: 50%;
+  height: 40px;
+  font-size: 2em;
+}
+
+input:nth-of-type(2){
+  grid-column: 1 / 2;
+  grid-row: 1 /2;
+  width: 95%;
+  justify-self:start;
+}
+
+input:nth-of-type(3){
+  grid-column: 2 / 3;
+  grid-row: 2 /3;
+  width: 50%;
+  height: 40px;
+  font-size: 2em;
+}
+
+input:nth-of-type(4){
+  grid-column: 2 / 3;
+  grid-row: 1 /2;
+  width: 90%;
+  justify-self:start;
+}
+
+p.resultado{
+  border: 1px solid gray;
+  width: 44%;
+  height: 44px;
+  border-radius: 3px;
+  margin-bottom: -40px;
+}
+
+
+p.resultado > img{
+  width: 40px;
+  height: 40px;
+  border:0px;
+
+}
